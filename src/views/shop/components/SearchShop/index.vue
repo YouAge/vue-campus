@@ -1,0 +1,101 @@
+<template>
+<div class="goods-list">
+  <FSort  @sort-change="sortChange" />
+
+  <a-skeleton :loading="loading" active >
+  <ul>
+    <li v-for="goods in goodsList" :key="goods.id" >
+      <goods-item :goods="goods" />
+    </li>
+  </ul>
+  </a-skeleton>
+<!--  <HInfiniteLoading :loading="loading" :finished="finished" @infinite="getData" />-->
+</div>
+  <template v-if="goodsList.length >0">
+    <a-pagination v-model:current="current" @change="changePage"
+                  v-model:pageSize="pageSizes" :total="total" show-less-items />
+  </template>
+
+</template>
+
+<script>
+import FSort from './components/FSort.vue'
+import GoodsItem from '../goods-item.vue'
+import { ref } from 'vue'
+import HInfiniteLoading from '@/components/HInfiniteLoading.vue'
+
+
+export default {
+  name: 'SearchShop',
+  components: { HInfiniteLoading, GoodsItem, FSort },
+  props:{
+    goodsList:{
+      type:Array,
+      default:[]
+    },
+    pageIndex:{
+      type:Number,
+      default: 1,
+    },
+    pageSize:{
+      type:Number,
+      default: 10,
+    },
+    total:{
+      type:Number,
+      default: 0,
+    },
+    loading:{
+      type:Boolean,
+      default: false
+    }
+  },
+  setup(props,{emit}){
+    // 商品列表数据
+    // const goodsList = ref([])
+    const current =ref(props.pageIndex)
+    const pageSizes =ref(props.pageSize)
+
+    // 加载中
+    // const loading = ref(false)
+    // 是否加载完毕
+    const finished = ref(false)
+
+    function sortChange(){}
+    function getData(){}
+
+
+    function changePage(page, pageSize){
+      // console.log('野马',page,pageSize)
+      emit('change',page,pageSize)
+    }
+    return {
+      sortChange,finished,getData,
+      current,
+      pageSizes,
+      changePage
+
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+.goods-list {
+  background: #fff;
+  padding: 0 25px;
+  margin-top: 25px;
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 5px;
+    li {
+      margin-right: 20px;
+      margin-bottom: 20px;
+      &:nth-child(5n) {
+        margin-right: 0;
+      }
+    }
+  }
+}
+</style>
