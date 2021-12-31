@@ -3,7 +3,6 @@
     <a-col :span="4">
       <a-card >
         <a-menu
-
           v-model:openKeys="openKeys"
           v-model:selectedKeys="selectedKeys"
           mode="inline"
@@ -13,18 +12,14 @@
             <template #title>{{item.name}}</template>
             <a-menu-item :key="f.value" v-for="f in item.children">{{f.name}}</a-menu-item>
           </a-sub-menu>
-
         </a-menu>
       </a-card>
-
     </a-col>
     <a-col :span="20">
-
       <a-row>
         <a-col v-if="imgListData.length===0" :span="24">
           <a-empty />
         </a-col>
-
         <a-col v-else v-for="path in imgListData" :key="path">
           <div  style="margin: 5px 5px 20px 5px; display: flex;flex-direction: column">
             <a-image  :width="200" :src="path"/>
@@ -104,6 +99,3 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-</style>

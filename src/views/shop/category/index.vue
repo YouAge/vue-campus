@@ -24,33 +24,16 @@ import GoodsItem from '../components/goods-item.vue'
 import TCarousel from '@/components/TCarousel.vue'
 import TMore from '@/components/TMore.vue'
 import SearchShop from '@/views/shop/components/SearchShop'
-const topCategory ={
-  id:'1',
-  title:'男装',
-  children:[
-    {id:1, title:'外套',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-    {id:2, title:'衬衫',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-    {id:3, title:'裤装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-    {id:4, title:'运动衫',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-    {id:5, title:'群装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-    {id:6, title:'内衣装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
-  ]
-}
-const subList =[
-  {id:1,title:'外套',goods:[]},
-  {id:2,title:'衬衫',goods:[]},
-  {id:3,title:'裤装',goods:[]},
-  {id:4,title:'运动衫',goods:[]},
-  {id:5,title:'内衣装',goods:[]},
-]
-const sliders = [
-  {imgUrl:require('@/assets/img/shop/category/01.jpg')},
-  {imgUrl:require('@/assets/img/shop/category/02.jpg')}
-]
+
 import {useStore} from 'vuex'
 import {useRoute,onBeforeRouteUpdate} from 'vue-router'
 import { ref, watch, nextTick, computed,onMounted,watchEffect } from 'vue'
 import { cateShopGet } from '@/api/shop'
+
+const sliders = [
+  {imgUrl:require('@/assets/img/shop/category/01.jpg')},
+  {imgUrl:require('@/assets/img/shop/category/02.jpg')}
+]
 export default {
   name: 'index',
   components: { SearchShop, TMore, GoodsItem,TCarousel },
@@ -70,7 +53,7 @@ export default {
     const goodsList = ref([])
     const pages = ref({
       pageIndex:1,
-      pageSize:2,
+      pageSize:20,
       total:0
     })
 
@@ -95,7 +78,10 @@ export default {
       })
       pages.value.total = f.count
       goodsList.value = f.rows
-      loading.value = false
+      setTimeout(()=>{
+        loading.value = false
+      },1000)
+
     }
     function npPage(pageIndex,pageSize){
       getCateShop({},pageIndex,pageSize)
@@ -119,7 +105,6 @@ export default {
     return {
       topCategory,
       cateId,
-      subList,
       sliders,
       goodsList,
       pages,

@@ -17,22 +17,28 @@
   <div class="admin-table-select">
     当前表格已选择 <b>{{0}}</b> 项 <span class="admin-table-clear">清空</span>
   </div>
-  <a-table :columns="columnsTable"  bordered :data-source="data"  :row-selection="{  onChange: checkAll }">
+  <a-table :columns="columnsTable"
+           :pagination="{current:page.pageIndex,pageSize:page.pageSize,total:page.total,onChange:currentPage}"
+           bordered :data-source="dataTable"  :row-selection="{  onChange: checkAll }">
     <template #status="{record}">
       <div>{{record.status}}</div>
     </template>
     <template #picture="{record}">
-      <div>{{record.picture}}</div>
+      <a-image  :width="200" :src="record.picture.length>0 && record.picture[0]"/>
     </template>
-    <template #sku="{record}">
-      <div></div>
-<!--      <div>{{record.sku}}</div>-->
+    <template #skus="{record}">
+        <a-button @click="showSkuFun(record.skus,record.sku)">查看</a-button>
     </template>
     <template #config="{record}">
       <a-button type="primary" style="margin-right: 10px">编辑</a-button>
       <a-button type="primary" danger>删除</a-button>
     </template>
   </a-table>
+
+
+  <a-modal v-model:visible="showSku.visible" title="查看sku" keyboard :footer="null" :bodyStyle="{minHeight: '400px'}">
+    <goods-sku :shop-data-sku="showSku.shopDataSku"/>
+  </a-modal>
 </template>
 
 <script>
@@ -41,32 +47,47 @@ import { useCreateModel } from '@/hooks/useCreateModel.js'
 import addUser from '@/admin/system/users/components/addUser.vue'
 import HInput from '@/components/HInput.vue'
 import { SearchOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { productGet } from '@/api/admin/goods.js'
+import GoodsSku from './components/goodsSku.vue'
 
 const columnsTable =[
   {title:'商品名字',dataIndex:'name'},
   {title:'商品原价',dataIndex:'price'},
   {title:'商品折扣',dataIndex:'discount'},
-  {title:'商品库存',dataIndex:'counts'},
-  {title:'商品SKU',dataIndex:'sku',slots:{ customRender: 'sku'}},
+  {title:'商品库存',dataIndex:'inventory'},
+  {title:'商品SKU',dataIndex:'skus',slots:{ customRender: 'skus'}},
   {title:'商品状态',dataIndex:'status',slots:{ customRender: 'status'}},
   {title:'商品图片',dataIndex:'picture',slots:{ customRender: 'picture'}},
   {title:'操作',slots:{ customRender: 'config'}},
 
 ]
-const dataTable = [
-  { key:'1',  name:"管理员",price:"500.00",discount:'0.5',counts:'2022',status:true },
-  { key:'2',  name:"管理员",price:"456.12",discount:'0.8',counts:'2022',status:true }
-]
+
 
 
 export default {
   name: 'goods',
   components:{
+    GoodsSku,
     HInput,
     UserOutlined,SearchOutlined},
   setup(){
     const searchUser = ref('')
     const checkAll = ref(false)
+    const dataTable = ref([])
+    const showSku = ref({
+      visible:false,
+      specsDateTable:[],
+      shopDataSku:[]
+    })
+    const page = ref({
+      pageSize:20,
+      pageIndex:1,
+      total:0
+    })
+    function currentPage(pageIndex,pageSize){
+      getShopAllHttp({},pageIndex,pageSize)
+    }
+
     function searchAdmin(){
       console.log(searchUser.value)
     }
@@ -75,24 +96,34 @@ export default {
       // 获取所有
     }
 
-    function addAdminUser(){
-      const p = useCreateModel(addUser,{
-        callback: addOk
-      })
+    function getShopAllHttp(item={},pageIndex=page.value.pageIndex,pageSize=page.value.pageSize){
+       productGet({pageIndex,pageSize,...item}).then(data=>{
+         dataTable.value = data.rows
+         page.value.total = data.total
+       })
     }
-    function addOk(){
-      console.log('成功关闭')
-    }
+    getShopAllHttp()
+
+
     function clearAdmin(){}
 
+
+    function showSkuFun(skus){
+      showSku.value.visible = true
+      showSku.value.shopDataSku = skus
+    }
+
     return {
+      page,
+      currentPage,
       searchUser,
       searchAdmin,
       delSearch,
+      showSku,
+      showSkuFun,
       columnsTable,
-      data:dataTable,
+      dataTable,
       checkAll,
-      addAdminUser,
       clearAdmin
     }
   }

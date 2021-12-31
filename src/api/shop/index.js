@@ -23,10 +23,14 @@ export  async function cateShopGet(data){
 }
 
 
-// 获取商品详情
 
-export async function goodsDetailsGet(id){
-  return await Api.get('/')
+// 获取商品详情
+export async function goodsDetailsGet(goodsId){
+  return await Api.get('/goods-details',{params:{goodsId}})
 }
 
 
+//加入购物车
+export async function addCartPost(data){
+  return await  Api.post('/add-cart',data)
+}

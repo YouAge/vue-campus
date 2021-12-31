@@ -45,7 +45,11 @@ export default {
   }
   .name {
     font-size: 16px;
+    text-overflow: ellipsis;
+    overflow:hidden;
+    white-space: nowrap;
   }
+
   .desc {
     color: #999;
     height: 29px;

@@ -1,5 +1,9 @@
 <template>
   <div class="clearfix">
+<!--    <template v-if="fileList.length">-->
+<!--      <a-img  :src="item" alt="avatar"   v-for="item in fileList" :key="item"/>-->
+<!--    </template>-->
+
   <a-upload
     v-model:file-list="fileList"
     list-type="picture-card"
@@ -9,12 +13,13 @@
     @change="handleChange"
     @preview="handlePreview"
     :remove="removeImg"
-    :data="{path:'/shanghai/toper'}"
+    :data="{path}"
   >
     <div v-if="fileList.length < imgNumber">
       <plus-outlined />
       <div class="ant-upload-text">上传图片</div>
     </div>
+
   </a-upload>
   <a-modal :visible="previewVisible" :footer="null" @cancel="imgCancel">
     <img alt="example" style="width: 100%" :src="imageUrl" />
@@ -54,6 +59,14 @@ export default {
     imgNumber:{
       type: Number,
       default: 1
+    },
+    path:{
+      type:String,
+      default: "fenshangjian/default"
+    },
+    imgDates:{
+      type:Array,
+      default:[]
     }
   },
   setup(props,{emit}) {

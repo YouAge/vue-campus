@@ -11,7 +11,7 @@
         @click="activeName = 'GoodsComment'"
         :class="{ active: activeName === 'GoodsComment' }"
         href="javascript:;"
-      >商品评价<span>({{goods.commentCount}})</span></a
+      >商品评价<span>({{99}})</span></a
       >
     </nav>
     <!-- 切换内容的地方 其实两个组件-->

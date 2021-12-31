@@ -2,19 +2,25 @@
 <div class="goods-list">
   <FSort  @sort-change="sortChange" />
 
-  <a-skeleton :loading="loading" active >
-  <ul>
-    <li v-for="goods in goodsList" :key="goods.id" >
-      <goods-item :goods="goods" />
-    </li>
-  </ul>
+
+  <div v-if="goodsList.length<1">
+    <div style="min-height: 400px;">
+      <a-empty />
+    </div>
+  </div>
+  <a-skeleton :loading="loading" :rows="15" active  v-else>
+    <ul style="min-height: 600px;">
+      <li v-for="goods in goodsList" :key="goods.id" >
+        <goods-item :goods="goods" />
+      </li>
+    </ul>
   </a-skeleton>
-<!--  <HInfiniteLoading :loading="loading" :finished="finished" @infinite="getData" />-->
 </div>
-  <template v-if="goodsList.length >0">
-    <a-pagination v-model:current="current" @change="changePage"
-                  v-model:pageSize="pageSizes" :total="total" show-less-items />
-  </template>
+
+    <div v-if="goodsList.length >0" class="goods-list page">
+      <a-pagination v-model:current="current" @change="changePage"
+                    v-model:pageSize="pageSizes" :total="total" show-less-items />
+    </div>
 
 </template>
 
@@ -97,5 +103,11 @@ export default {
       }
     }
   }
+}
+.page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
 }
 </style>

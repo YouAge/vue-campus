@@ -2,17 +2,17 @@
 <!--  商品信息-->
 <div class="goods-info">
   <div class="media">
-      <GoodsImage :images="imagesMock"/>
+      <GoodsImage :images="goodsInfo.picture"/>
       <GoodsSales />
   </div>
   <div class="spec">
-    <GoodsTitle :goods="goodsMock"/>
+    <GoodsTitle :goods="goodsInfo"/>
 <!--    // 数据选择组件-->
-    <GoodsSku :goods="goodsMock" @change="changeSku"/>
+    <GoodsSku :goods="goodsInfo" @change="changeSku" v-if="goodsInfo.skus"/>
 <!--    // 数量选择-->
-    <HNumber label="数量" v-model="num" :max="goodsMock.inventory" />
+    <HNumber label="数量" v-model="num" :max="inventory"/>
 <!--    // 加入购物车-->
-    <Button type="primary" style="margin-top:20px;width: 180px" size="large">加入购物车</Button>
+    <Button type="primary" @click="insertCart" style="margin-top:20px;width: 180px" size="large">加入购物车</Button>
   </div>
 </div>
 <!--  //商品信息-->
@@ -34,37 +34,87 @@
 
 import GoodsItem from '@/views/shop/components/goods-item.vue'
 import GoodsImage from '@/views/shop/product/components/GoodsImage.vue'
-import { goodsMock, imagesMock } from './dataImg.js'
 import GoodsSales from '@/views/shop/product/components/GoodsSales.vue'
 import GoodsTitle from '@/views/shop/product/components/GoodsTitle.vue'
 import GoodsSku from '@/views/shop/product/components/GoodsSku.vue'
 import HNumber from '@/components/HNumber.vue'
 import { Button } from 'ant-design-vue'
-import { ref,provide } from 'vue'
+import { ref, provide, nextTick,watch,onMounted } from 'vue'
 import GoodsTabs from '@/views/shop/product/components/GoodsTabs.vue'
 import GoodsWarn from '@/views/shop/product/components/GoodsWarn.vue'
 
 import {useRoute} from 'vue-router'
+import { addCartPost, goodsDetailsGet } from '@/api/shop'
 export default {
   name: 'index',
   components: { GoodsWarn, GoodsTabs, HNumber, GoodsSku, GoodsTitle, GoodsSales, GoodsImage, GoodsItem,Button },
   setup(){
+    const goodsInfo = useGoods()
     // 提供goods数据给后代组件使用
-    provide('goods', goodsMock)
+    const inventory = ref(99)
+    const currSku = ref(null)
     // 选择的数量
     const num = ref(1)
-    function changeSku(){}
-    const route = useRoute()
-    // 请求数据,根据商品id
+    function changeSku(item){
+      if(item){
+        currSku.value = item
+        inventory.value = item.sku.inventory
+      }
+    }
+    // 加入购物车
+    function insertCart(){
+      if(currSku.value && currSku.value.sku.id){
+        addCartPost({goodsId:goodsInfo.value.id,
+          shopNumber:num.value,skuId:currSku.value.sku.id
+        }).then(()=>{
+          console.log('加入购物车成功')
+        })
 
-
-
+      }else {
+        console.log('请选择完成规格')
+      }
+    }
 
     return {
-      imagesMock,goodsMock,changeSku,num
+      goodsInfo, changeSku,num,insertCart
     }
   }
 }
+
+const useGoods = ()=>{
+  const goodsInfo =ref({})
+  const route = useRoute()
+  provide('goods', goodsInfo)
+  async function getGoodsDetailsHttp(){
+    goodsDetailsGet(route.params.id).then(data=>{
+      goodsInfo.value = data
+      goodsInfo.value.userAddresses= []
+      goodsInfo.value.commentCount = 90
+
+      // nextTick(() => {
+      //   goodsInfo.value = data
+      //   goodsInfo.value.userAddresses= []
+      //   goodsInfo.value.commentCount = 90
+      // })
+    })
+  }
+  onMounted(async ()=>{
+    await getGoodsDetailsHttp()
+  })
+
+  // watch(()=>route.params.id,val=>{
+  //   goodsDetailsGet(route.params.id).then(data=>{
+  //     goodsInfo.value = data
+  //     nextTick(() => {
+  //       goodsInfo.value = data
+  //       goodsInfo.value.userAddresses= []
+  //       goodsInfo.value.commentCount = 90
+  //     })
+  //   })
+  // },{immediate:true})
+  return goodsInfo
+}
+
 </script>
 
 <style scoped lang="less">

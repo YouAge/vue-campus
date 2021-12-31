@@ -21,3 +21,7 @@ export async function catePost(data){
 export async function cateGet(){
   return await Api.get('/admin/cate')
 }
+
+export async function tagGet(){
+  return await Api.get('/admin/tags')
+}

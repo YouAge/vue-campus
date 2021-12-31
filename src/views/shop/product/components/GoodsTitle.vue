@@ -2,8 +2,8 @@
   <p class="g-name">{{goods.name}}</p>
   <p class="g-desc">{{goods.desc}}</p>
   <p class="g-price">
+    <span>{{goods.discount}}</span>
     <span>{{goods.price}}</span>
-    <span>{{goods.oldPrice}}</span>
   </p>
   <div class="g-service">
     <dl>
@@ -45,7 +45,7 @@ export default {
     const countyCode = ref('110101')
     const fullLocation = ref('北京市 市辖区 东城区')
     // 取出用户收货地址中默认的地址给四个数据赋值 (已登录)
-    if (props.goods.userAddresses) {
+    if (props.goods && props.goods.userAddresses) {
       const defaultAddresss = props.goods.userAddresses.find(item => item.isDefualt === 1)
       if (defaultAddresss) {
         provinceCode.value = defaultAddresss.provinceCode

@@ -18,7 +18,6 @@
          <RouterLink to="/login">
            <div  style="width: 100%;line-height: 50px;text-align: center; font-size: 18px;background-color: #1B1B1B;color: white">已有账号登入</div>
          </RouterLink>
-
        </div>
      </div>
   </div>

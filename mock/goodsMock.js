@@ -3,15 +3,31 @@
  *@ 文件介绍:
  */
 
-export const goodsMock ={"name":"这是第一个商品","status":true,
-  "cateId":[1,12],"picture":"http://127.0.0.1:6452/show/public/img/jiemei.jpg","desc":"爱上放假啊函数即可打开就",
-  "sku":[{"picture":"http://127.0.0.1:6452/show/public/img/jiemei.jpg","price":0,"oldPrice":0,"inventory":0,
-    "specs":[{"key":"尺码","value":"32"}]},
-    {"picture":"","price":0,"oldPrice":0,"inventory":0,"specs":
-        [{"key":"尺码","value":"31"}],"_X_ID":"row_36"},
-    {"picture":"","price":0,"oldPrice":0,"inventory":0,"specs":[{"key":"尺码","value":"33"}]}],"specs":[[{"key":"尺码","value":"32"}],[{"key":"尺码","value":"31"}],[{"key":"尺码","value":"33"}]],"particulars":"<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>&nbsp;</p>\n<table style=\"border-collapse: collapse; width: 100%;\" border=\"1\">\n<tbody>\n<tr>\n<td style=\"width: 49.6786%;\">第三方</td>\n<td style=\"width: 49.6786%;\">萨芬</td>\n</tr>\n<tr>\n<td style=\"width: 49.6786%;\">撒地方</td>\n<td style=\"width: 49.6786%;\">士大夫</td>\n</tr>\n</tbody>\n</table>\n<p>&nbsp;</p>\n<p><img src=\"http://127.0.0.1:6452/show/public/img/dongjixinkuan.jpg\" /></p>\n<p><img src=\"http://127.0.0.1:6452/show/public/img/jiemei.jpg\" /></p>\n</body>\n</html>"}
+export const goodsMock ={}
 
-
+const topCategory ={
+  id:'1',
+  title:'男装',
+  children:[
+    {id:1, title:'外套',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+    {id:2, title:'衬衫',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+    {id:3, title:'裤装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+    {id:4, title:'运动衫',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+    {id:5, title:'群装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+    {id:6, title:'内衣装',picture:'https://yanxuan.nosdn.127.net/bf9f0a32c2b79c6d29de7d0843888b48.png?quality=95&imageView'},
+  ]
+}
+const subList =[
+  {id:1,title:'外套',goods:[]},
+  {id:2,title:'衬衫',goods:[]},
+  {id:3,title:'裤装',goods:[]},
+  {id:4,title:'运动衫',goods:[]},
+  {id:5,title:'内衣装',goods:[]},
+]
+const sliders = [
+  {imgUrl:require('@/assets/img/shop/category/01.jpg')},
+  {imgUrl:require('@/assets/img/shop/category/02.jpg')}
+]
 
 export const goolist = [
   {
@@ -96,3 +112,19 @@ export const goolist = [
     "orderNum": null
   }
 ]
+const dataTable = [
+  { key:'1',  name:"管理员",price:"500.00",discount:'0.5',counts:'2022',status:true },
+  { key:'2',  name:"管理员",price:"456.12",discount:'0.8',counts:'2022',status:true }
+]
+
+/**
+ *  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+ "lint-staged": {
+    "*.{js,jsx,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+ * */

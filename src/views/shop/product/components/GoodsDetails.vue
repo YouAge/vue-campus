@@ -1,13 +1,6 @@
 <template>
 <div class="goods-details">
-  <ul class="attrs">
-    <li v-for="item in goods.details.properties" :key="item.value">
-      <span class="dt">{{item.name}}</span>
-      <span class="dd">{{item.value}}</span>
-    </li>
-  </ul>
-  <!-- 图片 -->
-  <img v-for="item in goods.details.pictures" :key="item" :src="item" alt="">
+    <div v-html="goods.particulars" v-if="goods"></div>
 </div>
 </template>
 

@@ -7,6 +7,7 @@
     <a-cascader v-model:value="shopData.cateId" :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
                 :options="cateOption" placeholder="选择商品类型" />
   </form-item>
+
   <form-item label="商品描述" name="desc">
     <a-textarea
       v-model:value="shopData.desc"
@@ -14,10 +15,37 @@
       :auto-size="{ minRows: 2, maxRows: 5 }"
     />
   </form-item>
-  <form-item label="商品图片">
-    <h-upload :img-number="4" @success="(file)=>{
+
+  <form-item label="商品标签">
+    <a-select
+      v-model:value="shopData.tags"
+      mode="multiple"
+      placeholder="请选择 标签，可多选"
+      style="width: 100%"
+    >
+      <a-select-option :value="item.id" v-for="item in tagOption" :key="item.id">{{item.name}}</a-select-option>
+    </a-select>
+  </form-item>
+
+  <form-item label="商品图片" name="picture">
+    <template v-if="shopData.picture.length<1">
+      <h-upload  :img-number="4" @success="(file)=>{
           shopData.picture = file
           }"/>
+    </template>
+      <div v-else style="margin-bottom:10px;display: flex">
+        <a-image  :width="150" :src="path" v-for="path in shopData.picture" :key="path"/>
+      </div>
+
+    <a-button @click="setImagArr" style="margin-right: 15px;">选择图片</a-button>
+    <a-button @click="shopData.picture=[]">重置图片</a-button>
+  </form-item>
+
+  <form-item label="商品介绍类型" >
+    <radio-group v-model:value="shopData.isTypeExplain">
+      <radio :value="1">普通商品</radio>
+      <radio :value="2">文章描述</radio>
+    </radio-group>
   </form-item>
 
   <form-item label="商品状态" >
@@ -47,7 +75,7 @@
 
   <form-item label="商品SKU">
     <div>
-      <vxe-table border min-height="600px"  :data="shopData.sku" :edit-config="{trigger:'click',mode:'cell'}">
+      <vxe-table border min-height="600px"  :data="shopData.skus" :edit-config="{trigger:'click',mode:'cell'}">
         <vxe-column v-for="item in specsDateTable" :title="item.name" :key="item.name">
           <template #default="{ row }" >
             <div>{{ (()=>{
@@ -102,11 +130,10 @@ import { reactive, ref } from 'vue'
 import HUpload from '@/components/HUpload.vue'
 import addSpecs from './components/addSpecs.vue'
 import {useCreateModel} from '@/hooks/useCreateModel.js'
-import { cateGet, specsGet } from '@/api/admin/specs.js'
-import { hierarchy } from '@/utils'
+import { cateGet, specsGet, tagGet } from '@/api/admin/specs.js'
 import HEdit from '@/components/h-edit'
 import { productPost } from '@/api/admin/goods.js'
-import { goodsMock } from '../../../mock/goodsMock.js'
+import ginImg from '@/admin/components/seachImg/ginImg.vue'
 const specsTable = [
   {title:'属性名',dataIndex:'name'},
   {title:'属性值',dataIndex:'value',slots:{ customRender: 'value'}},
@@ -141,22 +168,27 @@ export default {
     const goodFormRef = ref()
     const specsDateTable = ref([])
     const cateOption = ref([])
+    const tagOption = ref([])
     const specsOption = ref([])
-    const shopData = reactive(goodsMock)
-    // const shopData = reactive({
-    //   name:'这是第一个商品',
-    //   status: true,
-    //   cateId:[],
-    //   picture:'',
-    //   desc:'爱上放假啊函数即可打开就', // 描述
-    //   //商品sku  商品多种属性规格， 价格 图片
-    //   sku:[],
-    //   specs:[],
-    //   particulars:''
-    // })
+    // const shopData = reactive(goodsMock)
+    const shopData = reactive({
+      name:'这是第一个商品',
+      status: true,
+      isTypeExplain:1,
+      tags:[],
+      cateId:[],
+      picture:[],
+      desc:'爱上放假啊函数即可打开就', // 描述
+      //商品sku  商品多种属性规格， 价格 图片
+      skus:[],
+      specs:[],
+      particulars:''
+    })
 
     async function getCateDateAll(){
       cateOption.value = await cateGet()
+      tagOption.value = await tagGet()
+
     }
     getCateDateAll()
     //处理sku 组合算法
@@ -169,6 +201,16 @@ export default {
           shopData.specs.push([...skuArr,list[i][j]])
         }
       }
+    }
+
+    //选择图片，添加
+    function setImagArr(){
+      useCreateModel(ginImg,{
+        callback:(item)=>{
+
+          shopData.picture =item
+        }
+      })
     }
 
     // 添加sku
@@ -201,14 +243,14 @@ export default {
            }
            skuArry.push(o)
          })
-         console.log(specsDateTable.value)
+         console.log('specs',specsDateTable.value)
          //处理规则的格式为 [[{key:'尺码',value:'S'},{key:'尺码',value:'M'}]]
          shopData.specs = []
-         shopData.sku =[]
+         shopData.skus =[]
          // 获取到数据， 处理,  渲染 sku 的数据
          skuPowerDate([],0,skuArry)
          shopData.specs.forEach(f=>{
-           shopData.sku.push(
+           shopData.skus.push(
            { picture:'',price:0,oldPrice:0,inventory:0,specs:f })
          })
        }
@@ -232,9 +274,11 @@ export default {
       goodFormRef,
       shopData,
       cateOption,
+      tagOption,
       columnsTable,
       specsTable,
       specsDateTable,
+      setImagArr,
       addSpecsFun,
       delSkuSpecs,
       submitProduct

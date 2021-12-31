@@ -12,6 +12,10 @@ export async function productPost(data){
 export async function productGet(data){
   return await  Api.get('/admin/product',{params:data})
 }
+export async function delProductPost(goodsId){
+  return await Api.post('/admin/del-product',{goodsId})
+}
+
 
 export async function imgMapPost(data){
   return await Api.post('/admin/img-map-keys',data)

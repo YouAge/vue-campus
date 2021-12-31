@@ -26,8 +26,11 @@
 
 
 <!--  //新增属性-->
-  <a-modal v-model:visible="visible" title="新增属性" @ok="addSpecsFun" >
-    <a-form ref="formRef" :model="formState" :rules="rule">
+  <a-modal v-model:visible="visible" @cancel="()=>{
+     visible =false
+    formRef.resetFields()
+  }" title="新增属性" @ok="addSpecsFun" >
+    <a-form ref="formRef" :model="formState" :rules="rule" :label-col="{span:4}" :wrapper-col="{span:14}">
       <a-form-item label="属性名：" name="name">
         <a-input
           v-model:value="formState.name"
@@ -37,7 +40,7 @@
       </a-form-item>
       <a-form-item label="属性值：">
         <div  v-for="(domain, index) in formState.value">
-          <a-input v-model:value="domain.value" placeholder="输入属性值" style="width: 60%; margin: 8px  8px 8px 0"/>
+          <a-input v-model:value="domain.value" placeholder="输入属性值" style="width: 60%; margin: 8px  0"/>
           <MinusCircleOutlined v-if="formState.value.length > 1" class="dynamic-delete-button" :disabled="formState.value.length === 1"
             @click="removeSpecsValue(domain)"
           />
@@ -112,11 +115,11 @@ export default {
           }
         })
        const data = {name:formState.name,value:t}
-        console.log(data, formState)
         // visible.value =false
         await specsPost(data).then(()=>{
           getSpecsAll()
           visible.value =false
+          formRef.value.resetFields()
         })
 
       })
