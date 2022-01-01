@@ -38,18 +38,22 @@ import GoodsSales from '@/views/shop/product/components/GoodsSales.vue'
 import GoodsTitle from '@/views/shop/product/components/GoodsTitle.vue'
 import GoodsSku from '@/views/shop/product/components/GoodsSku.vue'
 import HNumber from '@/components/HNumber.vue'
-import { Button } from 'ant-design-vue'
+import { Button,message,Modal } from 'ant-design-vue'
 import { ref, provide, nextTick,watch,onMounted } from 'vue'
 import GoodsTabs from '@/views/shop/product/components/GoodsTabs.vue'
 import GoodsWarn from '@/views/shop/product/components/GoodsWarn.vue'
-
-import {useRoute} from 'vue-router'
+import {useStore} from 'vuex'
+import {useRoute,useRouter} from 'vue-router'
 import { addCartPost, goodsDetailsGet } from '@/api/shop'
+import router from 'vue-router'
 export default {
   name: 'index',
   components: { GoodsWarn, GoodsTabs, HNumber, GoodsSku, GoodsTitle, GoodsSales, GoodsImage, GoodsItem,Button },
   setup(){
+    const store = useStore()
     const goodsInfo = useGoods()
+    const route = useRoute()
+    const router = useRouter()
     // 提供goods数据给后代组件使用
     const inventory = ref(99)
     const currSku = ref(null)
@@ -63,15 +67,35 @@ export default {
     }
     // 加入购物车
     function insertCart(){
-      if(currSku.value && currSku.value.sku.id){
-        addCartPost({goodsId:goodsInfo.value.id,
-          shopNumber:num.value,skuId:currSku.value.sku.id
-        }).then(()=>{
-          console.log('加入购物车成功')
-        })
-
+      // 验证身份是否登入，提示先去登入
+      if(store.getters.loginStatus){
+        if(currSku.value && currSku.value.sku.id){
+          addCartPost({goodsId:goodsInfo.value.id,
+            shopNumber:num.value,skuId:currSku.value.sku.id
+          }).then(()=>{
+            message.success('加入购物车成功')
+          })
+        }else {
+          message.error('请选择完成规格')
+        }
       }else {
-        console.log('请选择完成规格')
+        Modal.confirm({
+          title: () => '提示',
+          // icon: () => createVNode(ExclamationCircleOutlined),
+          content: () => '您还为登入，请先登入后才再继续操作',
+          onOk() {
+            return new Promise((resolve, reject) => {
+              message.success('即将为你跳转登入页面')
+              setTimeout(()=>{
+                resolve()
+                router.push({path:'/login',query:{redirect:route.fullPath}})
+              } ,800);
+            }).catch(() => console.log('Oops errors!'));
+          },
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onCancel() {},
+        });
+
       }
     }
 

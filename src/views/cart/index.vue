@@ -20,16 +20,16 @@
 <!--    //购物车-->
     <div class="cart">
       <Table
-        :row-selection="{  onChange: checkAll }" :pagination="false"
+        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: checkAll }" :pagination="false"
         :columns="columns"  :data-source="cartData">
         <template  #info="{ column ,record }">
 <!--          {{ record}}-->
             <div class="goods">
-              <RouterLink :to="`/shop/product/${record.id}`">
-                <img :src="record.picture" alt="">
+              <RouterLink :to="`/shop/product/${record.goods.id}`">
+                <img :src="record.goods.picture[0]" alt="">
               </RouterLink>
               <div>
-                <p class="name ellipsis">{{record.name}}</p>
+                <p class="name ellipsis">{{record.goods.name}}</p>
 <!--                // 选择商品规格-->
                 <div></div>
               </div>
@@ -37,18 +37,18 @@
         </template>
         <template #price="{ record}">
           <div class="tc">
-            <p>&yen;{{record.nowPrice}}</p>
-            <p v-if="record.price-record.nowPrice>0">
-              比加入时降价 <span class="red">&yen;{{record.price-record.nowPrice}}</span>
+            <p>&yen;{{record.goodsSku.price}}</p>
+            <p v-if="record.oldPrice-record.price>0">
+              比加入时降价 <span class="red">&yen;{{record.oldPrice-record.price}}</span>
             </p>
           </div>
         </template>
-        <template #count="{record}">
-          <HNumber @change="$event=>updateCount(record.skuId,$event)" :max="record.stock" :modelValue="record.count"/>
+        <template #shopNumber="{record}">
+          <HNumber v-model="record.shopNumber" :max="record.goodsSku.inventory"/>
         </template>
         <template #subtotal="{record}">
           <div class="tc">
-            <p style="color: red;">&yen;{{Math.round(record.nowPrice*100)*record.count/100}}</p>
+            <p style="color: red;">&yen;{{Math.round(record.goodsSku.price*100)*record.shopNumber/100}}</p>
           </div>
         </template>
         <template #config="{record}">
@@ -60,13 +60,13 @@
     <!--      //选择统计 计算-->
     <div class="action">
       <div class="batch">
-        <Checkbox v-model:checked="checked" :indeterminate="indeterminate"  @change="checkAll">全选</Checkbox>
+        <Checkbox v-model:checked="isCheckAll" :indeterminate="indeterminate" >全选</Checkbox>
         <Button @click="deleteCart">删除商品</Button>
         <Button >移入收藏夹</Button>
       </div>
       <div class="total">
-        共 {{3}} 件商品，已选择 {{3}} 件，商品合计：
-        <span class="red">¥{{12}}</span>
+        共 {{cartData.length}} 件商品，已选择 {{selectedRowKeys.length}} 件，商品合计：
+        <span class="red">¥{{sumPrice}}</span>
         <Button @click="checkout" type="primary">下单结算</Button>
       </div>
     </div>
@@ -74,27 +74,28 @@
 </template>
 
 <script>
-import {Steps,Step, Table,Button,Checkbox} from 'ant-design-vue'
-import { ref } from 'vue';
+import { Steps, Step, Table, Button, Checkbox, message } from 'ant-design-vue'
+import { computed, ref,onMounted } from 'vue'
 import HCheckbox from '@/components/HCheckbox.vue'
-import { cartData } from '@/views/cart/cart_data.js'
 import HNumber from '@/components/HNumber.vue'
 import { useRouter} from 'vue-router'
+import { Mart } from '@/utils/message.js'
+import {useStore} from 'vuex'
 const columns = [
-  {title:'商品信息',align:'center', dataIndex:'info', key:'info',  slots: {
+  {title:'商品信息',align:'center',  dataIndex:'info', key:'info',  slots: {
       customRender: 'info',
     },},
-  {title:'单价',align:'center', dataIndex:'price', key: 'price',slots: {
+  {title:'单价',align:'center',width:170, dataIndex:'price', key: 'price',slots: {
     customRender: 'price'
     }},
-  {title:'数量',align:'center', dataIndex:'count',key: 'count',slots: {
-    customRender: 'count'
+  {title:'数量',align:'center',width:130, dataIndex:'shopNumber',key: 'shopNumber',slots: {
+    customRender: 'shopNumber'
     }},
-  {title:'小计',align:'center', dataIndex:'subtotal',key: 'subtotal',slots: {
+  {title:'小计',align:'center',width:170, dataIndex:'subtotal',key: 'subtotal',slots: {
     customRender: 'subtotal'
     }
   },
-  {title:'操作',align:'center', dataIndex:'config',key:'config',slots: {
+  {title:'操作',align:'center',width:150, dataIndex:'config',key:'config',slots: {
     customRender: 'config'
     } },
 ]
@@ -107,18 +108,41 @@ export default {
     Steps,Step,Table,Checkbox
   },
   setup(){
+    const store = useStore()
     const router = useRouter()
     const current = ref(0);
-    const indeterminate = ref(true)
-    const checked = ref(false)
-
+    store.dispatch('cart/getCartHttp') // 获取购物测数据
+    const cartData = computed(()=>store.state.cart.cartData)
+    const selectedRowKeys = computed(()=>store.state.cart.selectedRowKeys)
+    const isCheckAll = computed({
+      get(){
+        return selectedRowKeys.value.length === cartData.value.length
+      },
+      set(value){
+        store.commit('cart/setSelectedAll',value)
+      }
+    })
+    const sumPrice = computed(()=>{
+      let money = 0
+      if(selectedRowKeys.value.length === 0) return money
+      selectedRowKeys.value.forEach(value=>{
+        const price = cartData.value[value].goodsSku.price
+        const number = cartData.value[value].shopNumber
+        money += Math.round(price*100)*number/100
+      })
+      return Math.round(money*100)/100
+    }) // 选择后的计算总价
     // 全选
-    function checkAll(){}
-    // 小计
-    function updateCount(){}
+    function checkAll(rows,selectedRows){
+      store.commit('cart/setSelectedRow',rows)
+    }
     //删除
-    function deleteCart(){}
+    function deleteCart(){
+      if(selectedRowKeys.value.length ===0) return Mart({content:"请先选择要购买的商品"})
+    }
+    // 下单
     function checkout(){
+      if(selectedRowKeys.value.length ===0) return Mart({content:"请先选择要购买的商品"})
       router.push('/payment_settlement')
     }
     return {
@@ -126,19 +150,35 @@ export default {
       stepStyle: {
         marginBottom: '60px',
         boxShadow: '0px -1px 0 0 #e8e8e8 inset',
-
       },
       checkAll,
       columns,
       cartData,
-      updateCount,
       deleteCart,
       checkout,
-      indeterminate,
-      checked
+      isCheckAll,
+      indeterminate:computed(()=>selectedRowKeys.value.length   && selectedRowKeys.value.length < cartData.value.length),
+      selectedRowKeys,
+      sumPrice
     }
   }
 }
+
+// const useCart = ()=>{
+//   const cartData = ref([])
+//   async function getCartHttp(){
+//    const item  = await showCartGet()
+//     cartData.value = item
+//   }
+//   getCartHttp()
+//
+//   return {
+//     cartData,
+//     getCartHttp
+//   }
+// }
+
+
 </script>
 
 <style scoped lang="less">

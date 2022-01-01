@@ -3,16 +3,16 @@ import Cookie from 'js-cookie'
 
 
 
-export function setAccessToken(key,token){
+export function setAccessToken(key='AuthToken',token){
   Cookie.set(key,token)
 }
 
-export function getAccessToken(name){
+export function getAccessToken(name='AuthToken'){
   return Cookie.get(name)
 }
 
 /** 删除token */
-export function delAccessToken (name) {
+export function delAccessToken (name='AuthToken') {
   return Cookies.remove(name)
 }
 

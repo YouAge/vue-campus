@@ -41,11 +41,10 @@
 
 <script>
 import { reactive, ref, } from 'vue'
-import {Form,Input,Checkbox,Button,InputPassword} from 'ant-design-vue'
+import {Form,Input,Checkbox,Button,InputPassword,message} from 'ant-design-vue'
 import { UserOutlined ,LockOutlined } from '@ant-design/icons-vue';
 import { registerShopPost } from '@/api/shop'
-
-
+import router from '@/router'
 
 export default {
   name: 'registerForm',
@@ -61,7 +60,6 @@ export default {
       password2:''
     })
     async function paw2(rule,value){
-      console.log('规则',rule)
       if(!value)return Promise.reject('确认密码不能为空')
       if(value !== formState.password)return Promise.reject('2次密码不相等')
       return Promise.resolve()
@@ -71,7 +69,9 @@ export default {
         const {email,password,username} = formState
         registerShopPost({email,password,username}).then(item=>{
            // 组测成功， 直接登入，跳转首页
-          console.log(item)
+          router.push('/').then(()=>{
+            message.success('欢迎您加入 新风尚， 购物愉快')
+          })
         })
       })
     }

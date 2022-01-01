@@ -3,8 +3,8 @@
    <h1>{{loginStu?'用户登入':'新用户注册'}}</h1>
   <div class="login-form">
      <div class="login-box">
-        <LoginForm  v-if="loginStu"/>
-       <register-form v-else/>
+<!--        <LoginForm  v-if="loginStu"/>-->
+       <register-form />
      </div>
      <div class="but-box">
         <div class="account-box" v-if="loginStu">
@@ -36,11 +36,11 @@ export default {
   components:{ RegisterForm, LoginForm, Form, FormItem:Form.Item,Input,Button },
   setup(){
     const route = useRoute()
-    const loginStu = ref(route.meta.login)
-    onBeforeRouteUpdate((to)=>{
-      console.log('监听',to.meta)
-      loginStu.value = to.meta.login
-    })
+    const loginStu = ref(false)
+    // onBeforeRouteUpdate((to)=>{
+    //   console.log('监听',to.meta)
+    //   loginStu.value = to.meta.login
+    // })
     return {
       loginStu
     }

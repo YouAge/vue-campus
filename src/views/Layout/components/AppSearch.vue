@@ -16,10 +16,12 @@
           <a-menu>
             <a-menu-item>
                 <div>
-                  点击
+                  我的账户
                 </div>
             </a-menu-item>
-            <a-menu-item>点击2</a-menu-item>
+            <a-menu-item>
+              退出
+            </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
@@ -31,15 +33,15 @@
 <!--    </template>-->
 
   </li>
-  <li>
-    <RouterLink class="curr" to="/login">
-    <HeartOutlined :style="{fontSize: '20px'}"/>
-    </RouterLink>
-  </li>
+<!--  <li>-->
+<!--    <RouterLink class="curr" to="/login">-->
+<!--    <HeartOutlined :style="{fontSize: '20px'}"/>-->
+<!--    </RouterLink>-->
+<!--  </li>-->
   <li>
     <RouterLink class="curr" to="/cart">
       <i class="iconfont icon-cart"></i>
-      <em>{{1}}</em>
+<!--      <em>{{1}}</em>-->
     </RouterLink>
   </li>
 </ul>

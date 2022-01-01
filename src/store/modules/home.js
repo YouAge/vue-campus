@@ -1,7 +1,7 @@
 
 // 主要是 前台 用户登入信息，
 import { getAccessToken, setAccessToken } from '@/utils/cache.js'
-import { loginShopPost } from '@/api/shop'
+import { loginShopPost, userInfoGet } from '@/api/shop'
 
 const SHOP_TOKEN_NAME = 'AuthToken'
 
@@ -14,6 +14,7 @@ export default {
     userInfo:{},
     token:getAccessToken(SHOP_TOKEN_NAME),
     loginStatus: false, // 登入状态 购物
+    address:[] // 收获地址
   },
 
   mutations: {
@@ -28,13 +29,16 @@ export default {
       state.token = token
       setAccessToken(SHOP_TOKEN_NAME,token)
     },
-    removeToken(state,token){
+    removeToken(state){
       state.token =''
       setAccessToken(SHOP_TOKEN_NAME,'')
       state.loginStatus = false
     },
     setFooterShow (state, item) {
       state.footerShow = item
+    },
+    setAddress(state,item){
+      state.address = item
     }
 
   },
@@ -46,7 +50,14 @@ export default {
       commit('setUserInfo',item.user)
       commit('setLoginStatus',true)
       return true
-    }
+    },
+    async getUserInfo({state,commit},data){
+      const item =await userInfoGet()
+      commit('setUserInfo',item)
+      commit('setLoginStatus',true)
+      return true
+    },
+
 
 
   }
