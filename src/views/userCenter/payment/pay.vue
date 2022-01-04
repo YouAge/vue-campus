@@ -1,19 +1,15 @@
 <template>
   <div class="shop-content">
-  <Steps v-model:current="current"  type="navigation" size="small" :style="stepStyle" @change="changeSteps">
+  <Steps :current="2"  type="navigation" size="small" :style="stepStyle" @change="changeSteps">
     <Step title="购物车" status="finish" description="已选择完成"/>
-    <Step title="订单确认" status="finish"
-          description="已确认" />
-    <Step disabled
-          title="订单支付"
-          status="process"
-          description="选择支付方式"/>
+    <Step title="订单确认" status="finish" disabled description="已确认" />
+    <Step disabled title="订单支付" status="process" description="选择支付方式"/>
   </Steps>
   <div class="pay-info">
     <span class="icon iconfont icon-queren2"></span>
     <div class="tip">
       <p>订单提交成功！请尽快完成支付。</p>
-      <p v-if="5> -1">支付还剩 <span>{{30}}</span>, 超时后将取消订单</p>
+      <p v-if="order.countdown> -1">支付还剩 <span>{{ timerText }}</span>, 超时后将取消订单</p>
       <p v-else>订单已经超时</p>
     </div>
     <div class="amount">
@@ -43,8 +39,9 @@
 
 <script>
 import {Steps,Step, Table,Button,Checkbox,Radio,RadioGroup,Tag} from 'ant-design-vue'
-import { ref } from 'vue'
-import {useRouter} from 'vue-router'
+import { computed, ref } from 'vue'
+import {useRouter,useRoute} from 'vue-router'
+import { showOrderGet } from '@/api/shop'
 const routerPath = {
   0:'/cart',
   1: '/payment_settlement'
@@ -55,23 +52,62 @@ export default {
     Steps,Step,Table,Button,RadioGroup,Radio,Tag
   },
   setup(){
-    const current = ref(2);
+    const order = ref({});
     const router = useRouter()
-    const order = ref(null)
+    const orderId = ref(null)
+    const route = useRoute()
+    // 倒计时工具函数
+    const { start, timerText } = usePyTimer()
     function changeSteps(item){
       router.push(routerPath[item])
     }
+    showOrderGet({orderId:route.query.orderId}).then(item=>{
+      order.value = item
+      if(item.countdown>-1){
+        start(item.countdown)
+      }
+    })
+
+
+
+
     return {
-      current,
+      changeSteps,
+      timerText:computed(()=>timerText.value),
+      order,
       stepStyle: {
         marginBottom: '60px',
         boxShadow: '0px -1px 0 0 #e8e8e8 inset',
-
       },
-      changeSteps
+
     }
   }
 }
+import dayjs from 'dayjs'
+const usePyTimer = ()=>{
+  const timer=  ref(0)
+  const timerText = ref('')
+
+  const start = (countdown,cab)=>{
+    timer.value = countdown
+    timerText.value = dayjs.unix(timer.value).format('mm分ss秒')
+    if(timer.value <=0){
+      timerText.value = ''
+      cab && cab()
+      return
+    }
+    timer.value--
+   return setTimeout(()=>{
+      start(timer.value,cab)
+    },1000)
+  }
+  return {
+    start,
+    timerText
+  }
+
+}
+
 </script>
 
 <style scoped lang="less">

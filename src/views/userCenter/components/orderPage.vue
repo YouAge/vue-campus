@@ -47,7 +47,7 @@
     <div class="box-body">
       <!-- 收货地址组件 -->
       <div class="add-text">
-        <RadioGroup v-model:value="addSelect" >
+        <RadioGroup v-model:value="addSelect" @change="changeAddress">
           <div class="radio-item"  v-for="item in showAddress" :key="item.id">
             <Radio class="radio-style" :value="item.id">
               {{item.name}} {{item.fullLocation}} {{item.address}} +86-{{item.iPhone}}
@@ -62,7 +62,7 @@
 
           <!--          <Radio class="radio-style" :value="2">董柱 四川省 成都市 青羊区火车南站 +86-15607195236</Radio>-->
         </RadioGroup>
-        <p><a class="btn" @click="showAll">{{statusAll?'收起':'更多'}}地址</a>
+        <p><a class="btn" @click=" statusAll = !statusAll">{{statusAll?'收起':'更多'}}地址</a>
           <i class="icon  icon-open-address" style="transform: rotate(270deg); cursor: pointer;"></i></p>
       </div>
     </div>
@@ -84,10 +84,10 @@
     <h3 class="box-title">金额明细</h3>
     <div class="box-body">
       <div class="total">
-        <dl><dt>商品件数：</dt><dd>{{countNumber}}件</dd></dl>
-        <dl><dt>商品总价：</dt><dd>¥{{5}}</dd></dl>
-        <dl><dt>运<i></i>费：</dt><dd>¥{{14}}</dd></dl>
-        <dl><dt>应付总额：</dt><dd class="price">¥{{19}}</dd></dl>
+        <dl><dt>商品件数：</dt><dd>{{orderMoney.sumNumber}}件</dd></dl>
+        <dl><dt>商品总价：</dt><dd>¥{{orderMoney.goodsMoney}}</dd></dl>
+        <dl><dt>运<i></i>费：</dt><dd>¥{{12}}</dd></dl>
+        <dl><dt>应付总额：</dt><dd class="price">¥{{orderMoney.countMoney}}</dd></dl>
       </div>
     </div>
 
@@ -96,9 +96,10 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import {Steps,Step, Table,Button,Checkbox,Radio,RadioGroup,Tag} from 'ant-design-vue'
 import { useAddress } from '@/hooks/useAddress.js'
+import { useStore } from 'vuex'
 const columns = [
   {title:'商品信息', dataIndex:'info', key:'info',  slots: {
       customRender: 'info',
@@ -126,59 +127,70 @@ export default {
     orderData:{
       type:Object,
       default:[]
+    },
+    addValue:{
+      type:Number,
+      default: 0
+    },
+    orderMoney:{
+      type:Object,
+      default:{}
     }
   },
   setup(props,{emit}){
+    const store = useStore()
     const statusAll = ref(false)
-    const addSelect =ref()
-    // const addSelect = computed({
-    //   get(){
-    //     if(address.value.length===0) return 0
-    //     const f = address.value.find(item=>item.isDefault)
-    //     return f?f.id:address.value[0].id
-    //   },
-    //   set(val){
-    //     emit('change',val)
-    //   }
-    // })
-    const countNumber = computed(()=>{
-      let f=0
-      props.orderData.forEach(item=>{
-         f += item.shopNumber
-       })
-      return f
-    })
+    const addSelect =ref(props.addValue)
+    // function getDefault(){
+    //   if(address.value.length===0) return 0
+    //   const f = address.value.find(item=>item.isDefault)
+    //   return f?f.id:address.value[0].id
+    // }
 
     const {addShowAddress,address} = useAddress()
-
     const showAddress = computed(()=>{
-      if(statusAll.value){
+      if(statusAll.value){ //显示所有
          return address.value
       }else {
-        const f = address.value.find(item=>item.isDefault)
-        if(f) return [f]
-        else {
-          if(address.value.length !==0){
-            return [address.value[0]]
+        if(addSelect.value){
+          return  [address.value.find(item=> item.id ===addSelect.value)]
+        }else {
+          const f = address.value.find(item=>item.isDefault)
+          if(f) {
+            addSelect.value =f.id
+            emit('update:addValue',addSelect.value )
+            return [f]}
+          else {
+            if(address.value.length !==0){
+              addSelect.value =address.value[0].id
+              emit('update:addValue',addSelect.value )
+              return [address.value[0]]
+            }
+            return []
           }
-          return []
         }
       }
     })
-    console.log(showAddress.value)
-    function showAll(){
-      statusAll.value = !statusAll.value
-
+    // const selectShop =    watchEffect(()=>{
+    //   // 请求是异步的，不知道什么时候完成， nextTick 只是在下一次事件循环中调用，请求数据是在下
+    //   addSelect.value = getDefault()
+    // })
+    // watch(()=>address.value,(value)=>{
+    //   if(value){
+    //     selectShop && selectShop()
+    //   }
+    // })
+    function changeAddress(){
+      emit('update:addValue',addSelect.value )
     }
 
     return {
       columns,
       showAddress,
       addSelect,
-      countNumber,
       addShowAddress,
-      showAll,
-      statusAll
+      statusAll,
+      changeAddress
     }
   }
 }

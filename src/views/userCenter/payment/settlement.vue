@@ -16,7 +16,7 @@
   </Steps>
 
 <!--  // 地址选择-->
-  <order-page :order-data="settlementData"/>
+  <order-page :order-data="settlementData" v-model:addValue="addressValue" :order-money="orderMoney"/>
   <div class="submit">
     <Button @click="submitOrderFn" type="primary" :size="40">提交订单</Button>
   </div>
@@ -47,17 +47,20 @@ export default {
     })
     const current = ref(1);
     const router = useRouter()
-    const settlementData = computed(()=>store.getters.orderGoods)
+    const settlementData = computed(() =>store.getters.orderGoods)
+    const orderMoney = computed(() =>store.getters['cart/orderMoney'])
     function changeSteps(){
       router.push('/cart')
     }
-
-
-
-
+    const addressValue = ref() // 地址
     //地址
-      function submitOrderFn(){
-      router.push('/payment_pay')
+    function submitOrderFn(){
+      // router.push('/payment_pay')
+        store.dispatch('cart/submitOrders',{
+          address: store.getters.address.find(item=>item.id === addressValue.value)
+        }).then(orderId=>{
+          router.push( {path:'/payment_pay',query:{orderId}})
+        })
       }
     return {
       changeSteps,
@@ -67,8 +70,10 @@ export default {
         boxShadow: '0px -1px 0 0 #e8e8e8 inset',
       },
       settlementData,
+      orderMoney,
       radioStyle,
       submitOrderFn,
+      addressValue,
     }
   }
 }

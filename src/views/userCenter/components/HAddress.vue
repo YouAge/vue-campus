@@ -39,9 +39,13 @@ export default {
     data:{
       default: {},
       type:Object
+    },
+    callback:{
+      default: Function,
+      type:()=>{}
     }
   },
-  setup(){
+  setup(props,{emit}){
     const visible =ref(true)
     const formRef = ref()
     const formState = reactive({
@@ -58,6 +62,7 @@ export default {
           message.success('新增地址成功')
           visible.value =false
           formRef.value.resetFields()
+          props.callback()
         })
       })
     }

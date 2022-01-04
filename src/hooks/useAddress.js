@@ -4,7 +4,7 @@ import HAddress from '@/views/userCenter/components/HAddress.vue'
 import {useCreateModel} from './useCreateModel.js'
 import {useStore} from 'vuex'
 import { showAddressGet } from '@/api/shop'
-import {computed} from 'vue'
+import { computed, nextTick } from 'vue'
 export const useAddress = ()=>{
 
   const store = useStore()
@@ -20,7 +20,10 @@ export const useAddress = ()=>{
   // 新增加地址
   function addShowAddress(){
     useCreateModel(HAddress,{
-      title:'新增地址'
+      title:'新增地址',
+      callback:()=>{
+        getShowAddress()
+      }
     })
   }
 

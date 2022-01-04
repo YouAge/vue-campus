@@ -64,3 +64,17 @@ export async function showAddressGet(){
   return await  Api.get('/address')
 }
 
+
+// 订单
+export async function addOrderPost(data){
+  return await  Api.post('/order',data)
+}
+export async function delOrderPatch(data){
+  return await  Api.patch('/order',data)
+}
+export async function updateOrderPut(data){
+  return await  Api.put('/order',data)
+}
+export async function showOrderGet(data){
+  return await  Api.get('/order',{params:data})
+}
