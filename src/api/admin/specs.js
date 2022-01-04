@@ -5,6 +5,15 @@
 
 
 import Api from '@/utils/request.js'
+
+
+// 登入
+export async function adminLogin(data){
+  return await Api.post('/admin-login',data)
+}
+
+
+
 export async function specsPost(data){
   return  await Api.post('/admin/specs',data)
 }

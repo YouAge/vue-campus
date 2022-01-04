@@ -138,6 +138,11 @@ export default defineComponent({
            })
          }else {
            // 管理原登入
+           store.dispatch('home/adminLogin',formState).then(()=>{
+             router.push({path:redirect.value || '/admin/home'}).then(()=>{
+               message.success('欢迎回来')
+             })
+           })
          }
        })
     }

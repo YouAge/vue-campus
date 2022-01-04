@@ -1,7 +1,8 @@
 
 // 主要是 前台 用户登入信息，
-import { getAccessToken, setAccessToken } from '@/utils/cache.js'
+import {delAccessToken, getAccessToken, setAccessToken} from '@/utils/cache.js'
 import { loginShopPost, userInfoGet } from '@/api/shop'
+import {adminLogin} from "@/api/admin/specs";
 
 const SHOP_TOKEN_NAME = 'AuthToken'
 
@@ -29,9 +30,10 @@ export default {
       state.token = token
       setAccessToken(SHOP_TOKEN_NAME,token)
     },
-    removeToken(state){
+    removeToken(state,name=SHOP_TOKEN_NAME){
       state.token =''
-      setAccessToken(SHOP_TOKEN_NAME,'')
+      // setAccessToken(name,'')
+      delAccessToken(name)
       state.loginStatus = false
     },
     setFooterShow (state, item) {
@@ -39,6 +41,13 @@ export default {
     },
     setAddress(state,item){
       state.address = item
+    },
+
+
+    // ----- 管理员操作
+    setAdminToken(state,token){
+      state.token = token
+      setAccessToken('admintoken',token)
     }
 
   },
@@ -58,6 +67,13 @@ export default {
       return true
     },
 
+
+    // 管理员登入， 获取token， 注册管理员路由
+    async adminLogin({state,commit},data){
+      const item = await adminLogin(data)
+
+
+    }
 
 
   }
