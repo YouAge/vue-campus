@@ -16,7 +16,7 @@
   <div class="admin-table-select">
     当前表格已选择 <b>{{0}}</b> 项 <span class="admin-table-clear">清空</span>
   </div>
-  <a-table :columns="columnsTable"  bordered :data-source="data"  :row-selection="{  onChange: checkAll }">
+  <a-table :columns="columnsTable"  bordered :data-source="dataTable"  :row-selection="{  onChange: checkAll }">
     <template #status="{record}">
       <div>{{record.status}}</div>
     </template>
@@ -32,6 +32,7 @@ import { UserOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue'
 import HInput from '@/components/HInput.vue'
 import {useCreateModel} from '@/hooks/useCreateModel.js'
+import {getShopUserPage} from "./useHttp.js";
 const columnsTable =[
   {title:'用户名',dataIndex:'username'},
   {title:'邮箱',dataIndex:'email'},
@@ -54,9 +55,24 @@ export default {
   setup(){
     const searchUser = ref('')
     const checkAll = ref(false)
+    const dataTable = ref([])
+    const page = ref({
+      pageSize:20,
+      pageIndex:1,
+      total:0
+    })
+
+    async function currentPage(item={},pageIndex=page.value.pageIndex,pageSize=page.value.pageSize){
+     const {rows ,count} =  await getShopUserPage({...item,pageIndex,pageSize})
+
+      dataTable.value = rows
+      page.value.total = count
+    }
+    currentPage()
     function searchUserFun(){
       console.log(searchUser.value)
     }
+
     function delSearch(){
       searchUser.value = ''
       // 获取所有
@@ -78,7 +94,7 @@ export default {
       searchUserFun,
       delSearch,
       columnsTable,
-      data:dataTable,
+      dataTable,
       checkAll,
       clearAdmin
     }

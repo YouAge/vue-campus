@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { defineComponent, ref,getCurrentInstance  } from 'vue';
+import { defineComponent, ref,getCurrentInstance,onMounted  } from 'vue';
 import { imagsListGet, imgMapGet } from '@/api/admin/goods.js'
 import Clipboard from 'clipboard'
 export default defineComponent({
@@ -87,6 +87,22 @@ export default defineComponent({
   function handleClick({keyPath}){
     getImageListHttp(keyPath.join('/'))
   }
+
+    onMounted(()=>{
+
+      const images = document.querySelectorAll('img')
+
+      const callback = entries =>{
+        entries.forEach(entry=>{
+          const imge = entry.target;
+          const data_src = image.getAttribute('data-src')
+
+          observer.unobserve(imge) //取消观察
+        })
+      }
+      const observer = new  IntersectionObserver(callback)
+    })
+
     return {
       openKeys,
       selectedKeys,

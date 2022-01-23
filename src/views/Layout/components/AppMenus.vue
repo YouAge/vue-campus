@@ -144,7 +144,8 @@ export default defineComponent({
     height: 132px;
     opacity: 1;
   }
-  width: 1240px;
+  //width: 1240px;
+  width: 100%;
   background-color: #fff;
   position: fixed;
   left: 50%;
@@ -153,28 +154,37 @@ export default defineComponent({
   transform: translateX(-50%);
   overflow: hidden;
   opacity: 0;
-  box-shadow: 0 0 5px #ccc;
+  //box-shadow: 0 0 5px #ccc;
   transition: all .2s .1s;
+  display: flex;
+  justify-content: center;
   ul {
+    width: 1240px;
     display: flex;
     flex-wrap: wrap;
-    padding: 0 70px;
+    //padding: 0 70px;
     align-items: center;
     height: 132px;
   li{
     width: 110px;
     text-align: center;
+    border-radius: 4px;
     img{
+      margin-top: 15px;
       width: 60px;
       height: 60px;
+      border-radius: 4px;
     }
     p{
       padding-top: 10px;
     }
-    &:hover{
+    transition: all .5s;
+    &:hover {
       p{
         color: #27BA9B;
       }
+      transform: translate3d(0,-3px,0);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
   }
 }}

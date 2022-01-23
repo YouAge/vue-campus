@@ -6,6 +6,7 @@
       <img :src="item.img" class="carousel-img"/>
     </div>
   </Carousel>
+  sada
 </div>
 </template>
 
@@ -37,10 +38,12 @@ export default {
   setup () {
     const store = useStore()
     store.commit('home/setFooterShow', false)
-    const timer = 1500
+    const timer = 1000
     const varousel = ref(null)
     const carouseIndex = ref(0)
     const dataIndexLength = carouseDateImg.length -1
+
+
     function dotNumber (index) {
       carouseIndex.value = index
       if (index === dataIndexLength) {
@@ -49,22 +52,24 @@ export default {
         store.commit('home/setFooterShow', false)
       }
     }
-
+    const thrVarousel = throttle(timer)
     function slideCarousel (item){
       if( item === 'next' ){
         if( carouseIndex.value === dataIndexLength) return
-        throttle(function () {
-          varousel.value.next()
-        }, timer)()
+        // throttle(function () {
+        //   varousel.value.next()
+        // }, timer)()
+        thrVarousel(()=>{varousel.value.next()})
       }
       else{
         // 获取滚动跳，到0时 才出发 走马灯
         let osTop = document.documentElement.scrollTop || document.body.srcollTop;
         console.log(carouseIndex.value === dataIndexLength ,osTop,osTop === undefined )
         if(carouseIndex.value === dataIndexLength && osTop !== undefined && osTop >0) return
-        throttle(() => {
-          varousel.value.prev()
-        }, timer)()
+        // throttle(() => {
+        //   varousel.value.prev()
+        // }, timer)()
+        thrVarousel(()=>{varousel.value.prev()})
       }
 
     }

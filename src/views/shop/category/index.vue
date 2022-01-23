@@ -1,9 +1,9 @@
 <template>
   <!--    //轮播图-->
-  <t-carousel :sliders="sliders" style="height:500px"/>
+<!--  <t-carousel :sliders="sliders" style="height:500px"/>-->
 <!--//全部商品-->
   <div class="sub-list">
-    <h3>潮流服装</h3>
+    <h3>{{topCategory.name}}</h3>
     <ul>
       <li v-for="sub in topCategory.children" :key="sub.id"
           :class="{'sel-cate':sub.id ==cateId }" >
@@ -116,7 +116,14 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+// 鼠标经过上移阴影动画
+.hoverShadow () {
+  transition: all .5s;
+  &:hover {
+    transform: translate3d(0,-3px,0);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  }
+}
 h3 {
   font-size: 28px;
   color: #666;
@@ -135,25 +142,31 @@ h3 {
     li {
       width: 168px;
       height: 160px;
-
+      border-radius: 4px;
       a {
         text-align: center;
         display: block;
         font-size: 16px;
         img {
+          margin-top: 15px;
           width: 100px;
           height: 100px;
+          border-radius: 4px;
         }
         p {
           line-height: 40px;
         }
-        &:hover {
-          color: #27BA9B;
-        }
+          transition: all .5s;
+          &:hover {
+            color: #27BA9B;
+            transform: translate3d(0,-3px,0);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+          }
       }
     }
     .sel-cate {
-      border: 1px #27BA9B solid;
+      //border: 1px #27BA9B solid;
+      background: #42b983;
     }
   }
 }

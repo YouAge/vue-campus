@@ -2,13 +2,14 @@
 /**
  * 节流
  * */
-export function throttle (fun, delay) {
-  let timer = null
-  return function () {
+export function throttle ( delay) {
+  var timer = null
+  return function (fun) {
     const context = this
     const args = arguments
     if (!timer) {
       timer = setTimeout(function () {
+        timer= null
       }, delay)
       fun.apply(context, args)
     }

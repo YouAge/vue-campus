@@ -1,4 +1,7 @@
 <template>
+  <div class="sub-list">
+    <h3>{{'商品搜索：'+ keyword}}</h3>
+  </div>
   <!--  // 商品列表-->
   <search-shop :goods-list="goodsList" :total="pages.total" @change="npPage"
                :page-index="pages.pageIndex" :page-size="pages.pageSize"/>
@@ -48,8 +51,20 @@ export default {
     return {
       goodsList,
       pages,
-      npPage
+      npPage,
+      keyword
     }
   }
 }
 </script>
+
+<style scoped>
+.sub-list {
+  margin-top: 20px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+ align-items: center;
+  height: 50px;
+}
+</style>

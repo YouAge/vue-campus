@@ -1,39 +1,35 @@
 <template>
 <div class="goods-list">
   <FSort  @sort-change="sortChange" />
-
-
   <div v-if="goodsList.length<1">
     <div style="min-height: 400px;">
       <a-empty />
     </div>
   </div>
-  <a-skeleton :loading="loading" :rows="15" active  v-else>
+  <Skeleton :loading="loading"  active :paragraph="{rows:13}"  v-else>
     <ul style="min-height: 600px;">
       <li v-for="goods in goodsList" :key="goods.id" >
         <goods-item :goods="goods" />
       </li>
     </ul>
-  </a-skeleton>
+  </Skeleton>
 </div>
-
     <div v-if="goodsList.length >0" class="goods-list page">
       <a-pagination v-model:current="current" @change="changePage"
                     v-model:pageSize="pageSizes" :total="total" show-less-items />
     </div>
-
 </template>
 
 <script>
 import FSort from './components/FSort.vue'
 import GoodsItem from '../goods-item.vue'
-import { ref } from 'vue'
+import {ref, toRaw} from 'vue'
 import HInfiniteLoading from '@/components/HInfiniteLoading.vue'
-
+import {Skeleton} from 'ant-design-vue'
 
 export default {
   name: 'SearchShop',
-  components: { HInfiniteLoading, GoodsItem, FSort },
+  components: { HInfiniteLoading, GoodsItem, FSort,Skeleton },
   props:{
     goodsList:{
       type:Array,
@@ -67,7 +63,9 @@ export default {
     // 是否加载完毕
     const finished = ref(false)
 
-    function sortChange(){}
+    function sortChange(sortParams){
+      console.log('排序', toRaw( sortParams))
+    }
     function getData(){}
 
 

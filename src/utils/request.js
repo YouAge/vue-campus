@@ -29,6 +29,7 @@ instance.interceptors.response.use(res=>{
   const {data,config} = res
   const code = data.code
   const message = data.message || data.msg
+  console.log(data)
   if([200,'200'].includes(code)){
     return data.data
   }else {
