@@ -18,6 +18,18 @@
           <SelectOption v-for="item in specsValueOption" :key="item.name" :value="item.name">{{item.name}}</SelectOption>
         </Select>
       </div>
+      <div style="margin-top: 20px">
+        <span>原价：</span>
+        <Input v-model:value="inp.oldPrice" placeholder="输入原价"></Input>
+      </div>
+      <div style="margin-top: 20px">
+        <span>折扣价：</span>
+        <Input v-model:value="inp.price" placeholder="输入折扣价"></Input>
+      </div>
+      <div style="margin-top: 20px">
+        <span>库存：</span>
+        <Input v-model:value="inp.inventory" placeholder="输入折扣价"></Input>
+      </div>
     </div>
 <!--    </Space>-->
   </Modal>
@@ -25,7 +37,8 @@
 
 <script>
 import { reactive, ref,toRefs } from 'vue'
-import {Modal,Form,FormItem,Input,RadioGroup,Radio,Select,Space,SelectOption} from 'ant-design-vue'
+import {Modal,Form,FormItem,Input,RadioGroup,
+  Radio,Select,Space,SelectOption} from 'ant-design-vue'
 
 export default {
   name: 'addSpecs',
@@ -51,6 +64,12 @@ export default {
     const specsValueOption = ref([])
     const visible = ref(true)
     const name = ref(null)
+    const inp = reactive({
+      price:0,
+      oldPrice:0,
+      inventory:0
+    })
+
     const value = ref([])
 
     function setSpecsValue(id){
@@ -66,7 +85,8 @@ export default {
 
       const specss = {
         name:name.value,
-        value:value.value
+        value:value.value,
+        ...inp
       }
 
       // 执行回调
@@ -75,6 +95,7 @@ export default {
     }
 
     return {
+      inp,
       visible,
       handleOk,
       name,

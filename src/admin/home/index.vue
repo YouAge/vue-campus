@@ -1,9 +1,6 @@
 <template>
-  <div v-for="f in 10">
-    sdahf
-    sadfhsda
-    asgdzheshi
-    这是
+  <div>
+    <h1>欢迎登入，新风尚，校园购后台管理</h1>
   </div>
 </template>
 

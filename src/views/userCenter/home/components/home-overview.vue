@@ -5,7 +5,7 @@
       <div class="avatar">
         <img src="http://yjy-xiaotuxian-dev.oss-cn-beijing.aliyuncs.com/avatar/2021-11-30/9c48e7dd-7ea4-44c6-98ad-b0f722330cc1.jpg"/>
       </div>
-      <h4>{{dsafdsf}}</h4>
+      <h4>{{userInfo.username}}</h4>
     </div>
     <div class="item">
       <a href="javascript:;">
@@ -16,17 +16,31 @@
         <span class="iconfont icon-aq"></span>
         <p>安全设置</p>
       </a>
-      <a href="javascript:;">
+      <a href="/user/address">
         <span class="iconfont icon-dw"></span>
         <p>地址管理</p>
       </a>
     </div>
   </div>
+
+  <div class="">
+
+  </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'homeOverview'
+  name: 'homeOverview',
+  data(){
+    return {}
+  },
+  computed:{
+    ...mapGetters([
+      'userInfo'
+    ])
+  }
 }
 </script>
 

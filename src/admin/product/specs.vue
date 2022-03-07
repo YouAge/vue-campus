@@ -19,8 +19,8 @@
       </div>
     </template>
     <template #config="{record}">
-      <a-button type="primary" style="margin-right: 10px">编辑</a-button>
-      <a-button type="primary" danger>删除</a-button>
+      <a-button type="primary" style="margin-right: 10px" @click="editSpec(record)">编辑</a-button>
+      <a-button type="primary" danger @click="delSpecs(record)">删除</a-button>
     </template>
   </a-table>
 
@@ -28,8 +28,9 @@
 <!--  //新增属性-->
   <a-modal v-model:visible="visible" @cancel="()=>{
      visible =false
+    editId = null
     formRef.resetFields()
-  }" title="新增属性" @ok="addSpecsFun" >
+  }" title="新增属性" @ok="addSpecsFun">
     <a-form ref="formRef" :model="formState" :rules="rule" :label-col="{span:4}" :wrapper-col="{span:14}">
       <a-form-item label="属性名：" name="name">
         <a-input
@@ -58,8 +59,8 @@
 <script>
 import HInput from '@/components/HInput.vue'
 import { SearchOutlined, UserOutlined, MinusCircleOutlined, PlusOutlined  } from '@ant-design/icons-vue'
-import { reactive, toRaw,ref } from 'vue'
-import { specsGet, specsPost } from '@/api/admin/specs.js'
+import { reactive, toRaw, ref, getCurrentInstance } from 'vue'
+import { specsDel, specsGet, specsPost } from '@/api/admin/specs.js'
 import { hierarchy } from '@/utils'
 const specsTable = [
   {title:'属性名',dataIndex:'name'},
@@ -72,9 +73,12 @@ export default {
     HInput,
     UserOutlined,SearchOutlined,MinusCircleOutlined, PlusOutlined },
   setup(){
+    const internalInstance = getCurrentInstance()
+    const app = internalInstance.appContext.config.globalProperties
     const visible = ref(false)
     const formRef = ref()
     const specsDateTable = ref([])
+    const editId = ref(null)
     const searchSpecs = ref('')
     const formState = reactive({
       name:'',
@@ -83,8 +87,6 @@ export default {
 
    async function getSpecsAll(){
       const data = await specsGet()
-     console.log(data)
-     // specsDateTable.value = hierarchy(data,'value')
      console.log(data)
      specsDateTable.value = data
    }
@@ -126,6 +128,10 @@ export default {
 
       //
     }
+    function cancelSpec(){
+      editId.value = null
+      formRef.value.resetFields()
+    }
 
     function removeSpecsValue(item){
       let index = formState.value.indexOf(item);
@@ -144,6 +150,25 @@ export default {
         key: Date.now(),
       })
     }
+    function delSpecs(row){
+      app.$confirm('您确定要删除它吗','删除提醒',{
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(()=>{
+        specsDel({id:row.id}).then(()=>{
+          app.$message.success('删除成功')
+          getSpecsAll()
+        })
+      })
+    }
+
+    function editSpec(row){
+      editId.value = row.id
+      formState.name = row.name
+      formState.value = row.value
+      visible.value = true
+    }
 
     return {
       addSpecsFun,
@@ -158,6 +183,8 @@ export default {
       addDomain,
       formRef,
       rule,
+      delSpecs,
+      editSpec,
     }
   }
 }

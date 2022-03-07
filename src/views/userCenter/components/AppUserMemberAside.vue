@@ -7,7 +7,8 @@
 <!--        <RouterLink exact-active-class="active" to="/user/member">消息通知</RouterLink>-->
         <a href="javascript:;">消息通知</a>
         <a href="javascript:;">个人信息</a>
-        <a href="javascript:;">地址管理</a>
+<!--        <a href="javascript:;">地址管理</a>-->
+        <RouterLink exact-active-class="active" to="/user/address">地址管理</RouterLink>
         <a href="javascript:;">我的足迹</a>
       </div>
       <h4>交易管理</h4>

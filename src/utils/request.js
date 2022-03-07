@@ -19,25 +19,31 @@ instance.interceptors.request.use(config=>{
   if(store.getters.token || token){
     config.headers['AuthToken'] = store.getters.token && token
   }
+  if(store.getters.adminToken){
+    config.headers['admintoken'] = store.getters.adminToken
+  }
   console.log(config)
   return config
 },error => {
   return Promise.reject(error)
 })
 
-instance.interceptors.response.use(res=>{
+instance.interceptors.response.use(async res=>{
   const {data,config} = res
   const code = data.code
   const message = data.message || data.msg
   console.log(data)
+  if(message === '查询成功'){
+    return data
+  }
   if([200,'200'].includes(code)){
     return data.data
   }else {
     switch (code){
       case 401:
         // 清除登入信息
-        store.commit('home/removeToken')
-        router.push('/login')
+        await store.commit('home/removeToken')
+        await router.push('/login')
         AMessage.error('身份验证失败， 请重新登入')
         return
       case 400:

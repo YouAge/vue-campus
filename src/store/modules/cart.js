@@ -1,11 +1,11 @@
-import { addOrderPost, showCartGet } from '@/api/shop'
+import { addOrderPost, delCartPatch, showCartGet } from '@/api/shop'
 import { getLocal, setLocal } from '@/utils/cache.js'
 
 export default {
   namespaced: true,
   state:{
     cartData:getLocal('cart') || [],
-    selectedRowKeys: getLocal('selectedRowKeys') || [],
+    selectedRowKeys: getLocal('selectedRowKeys') || [], // 选中待数据 索引
     checkBox:{
       checkAll:false
     },
@@ -22,7 +22,7 @@ export default {
     // 计算最后的价格
     orderMoney(state,getters){
       let sumNumber =0
-      let countMoney=12 // 运费
+      let countMoney=0 // 运费
       let goodsMoney=0
       if(getters.orderGoods.length===0) return {sumNumber,countMoney,goodsMoney}
       getters.orderGoods.forEach(item=>{
@@ -63,7 +63,7 @@ export default {
     // 下订单后删除已选择的商品
     delSelectGoods(state,getters,){
       console.log(state,getters,this.getters['cart/orderGoods'])
-      state.selectedRowKeys.for(item=>{
+      state.selectedRowKeys.forEach(item=>{
         state.cartData.splice(item,1)
       })
 
@@ -72,6 +72,9 @@ export default {
   },
 
   actions:{
+    async delCartHttp(){
+
+    },
 
     async getCartHttp({commit}){
       const item  = await showCartGet()
@@ -92,13 +95,26 @@ export default {
           desc:item.goods.desc
         })
       })
-     const item = addOrderPost({address:data.address,goods,
+     const item = addOrderPost({
+       address:data.address,goods,payMoney:getters.orderMoney.goodsMoney,
         shopNumber:getters.orderMoney.sumNumber})
+
+      const delData = []
+      let delIds =[]
+      for (let index of state.selectedRowKeys){
+        delData.push(state.cartData[index])
+        delIds.push(state.cartData[index].id)
+      }
+      //请求接口
+     const status =  await delCartPatch({cartIds:delIds})
+      let newDate =[]
+       delData.forEach(item=>{
+         newDate = state.cartData.filter(f=>f.id !==item.id)
+      })
+      commit('setCartData',newDate)
+      commit('setSelectedRow',[])
       // 清除选中的商品
-      // commit('delSelectGoods')
-      // const newDate =  state.cartData.filter((item,index)=> !state.selectedRowKeys.include(index))
-      // commit('setCartData',newDate)
-      // commit('setSelectedRow',[])
+      commit('delSelectGoods')
       return item
     }
 

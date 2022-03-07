@@ -16,37 +16,27 @@
   <div class="admin-table-select">
     当前表格已选择 <b>{{0}}</b> 项 <span class="admin-table-clear">清空</span>
   </div>
-  <a-table :columns="columnsTable"  bordered :data-source="dataTable"  :row-selection="{  onChange: checkAll }">
-    <template #status="{record}">
-      <div>{{record.status}}</div>
+  <vxe-grid v-bind="gridOptionsl">
+    <template #status="{ row }">
+      <el-tag
+        class="mx-1"
+        :type="row.status?'success':'danger'"
+        effect="dark"
+      >{{row.status?'正常':'失效'}}</el-tag>
     </template>
-    <template #config="{record}">
-      <a-button type="primary" style="margin-right: 10px">编辑</a-button>
-      <a-button type="primary" danger>删除</a-button>
+    <template #config="{row}">
+            <el-button type="primary" style="margin-right: 10px">编辑</el-button>
+            <el-button type="danger" danger @click="updateStatus(row)">{{row.status?'封号':'解封'}}</el-button>
     </template>
-  </a-table>
+
+  </vxe-grid>
 </template>
 
 <script>
 import { UserOutlined, SearchOutlined } from '@ant-design/icons-vue';
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import HInput from '@/components/HInput.vue'
-import {useCreateModel} from '@/hooks/useCreateModel.js'
 import {getShopUserPage} from "./useHttp.js";
-const columnsTable =[
-  {title:'用户名',dataIndex:'username'},
-  {title:'邮箱',dataIndex:'email'},
-  {title:'手机号',dataIndex:'iphone'},
-  {title:'创建时间',dataIndex:'time'},
-  {title:'状态',dataIndex:'status',slots:{ customRender: 'status'}},
-  {title:'操作',slots:{ customRender: 'config'}},
-
-]
-const dataTable = [
-  { key:'1',  username:"管理员",email:"12314@dsf.com",iphone:'1357897823',time:'2022-01-01 12:12:12',status:true },
-  { key:'2',  username:"管理员",email:"12314@dsf.com",iphone:'1357897823',time:'2022-01-01 12:12:12',status:true }
-]
-
 export default {
   name: 'index',
   components:{
@@ -61,16 +51,33 @@ export default {
       pageIndex:1,
       total:0
     })
+    const gridOptionsl = reactive({
+      border: true,
+      align:null,
+      columns:[
+        { type: 'checkbox', width: 60 },
+        {title:'用户名',field:'username'},
+        {title:'邮箱',field:'email'},
+        {title:'手机号',field:'iphone'},
+        {title:'创建时间',field:'time'},
+        {title:'状态',field:'status',slots:{ default: 'status'}},
+        {title:'操作',slots:{ default: 'config'}},
+      ],
+      data:[]
+    })
 
     async function currentPage(item={},pageIndex=page.value.pageIndex,pageSize=page.value.pageSize){
      const {rows ,count} =  await getShopUserPage({...item,pageIndex,pageSize})
 
-      dataTable.value = rows
+      gridOptionsl.data = rows
       page.value.total = count
     }
     currentPage()
     function searchUserFun(){
       console.log(searchUser.value)
+    }
+    function updateStatus(row){
+
     }
 
     function delSearch(){
@@ -93,10 +100,11 @@ export default {
       searchUser,
       searchUserFun,
       delSearch,
-      columnsTable,
       dataTable,
       checkAll,
-      clearAdmin
+      clearAdmin,
+      gridOptionsl,
+      updateStatus
     }
   }
 }

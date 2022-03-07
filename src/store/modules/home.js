@@ -68,12 +68,7 @@ export default {
     },
 
 
-    // 管理员登入， 获取token， 注册管理员路由
-    async adminLogin({state,commit},data){
-      const item = await adminLogin(data)
 
-
-    }
 
 
   }

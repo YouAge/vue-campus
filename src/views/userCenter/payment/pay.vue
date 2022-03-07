@@ -14,7 +14,7 @@
     </div>
     <div class="amount">
       <span>应付总额：</span>
-      <span>¥{{90}}</span>
+      <span>¥{{order.payMoney}}</span>
     </div>
   </div>
   <!-- 付款方式 -->
@@ -22,26 +22,34 @@
     <p class="head">选择以下支付方式付款</p>
     <div class="item">
       <p>支付平台</p>
-      <a class="btn wx" href="javascript:;"></a>
-      <a class="btn alipay" @click="visibleDialog=true" :href="payUrl" target="_blank"></a>
+      <a class="btn wx" href="javascript:;" @click="visibleDialog=true"></a>
+      <a class="btn alipay" @click="visibleDialog=true" href="javascript:;" ></a>
     </div>
     <div class="item">
       <p>支付方式</p>
-      <a class="btn" href="javascript:;">招商银行</a>
-      <a class="btn" href="javascript:;">工商银行</a>
-      <a class="btn" href="javascript:;">建设银行</a>
-      <a class="btn" href="javascript:;">农业银行</a>
-      <a class="btn" href="javascript:;">交通银行</a>
+      <a class="btn" href="javascript:void(0);" @click.stop="visibleDialog=true">招商银行</a>
+      <a class="btn" href="javascript:;" @click.stop="visibleDialog=true">工商银行</a>
+      <a class="btn" href="javascript:;" @click.stop="visibleDialog=true">建设银行</a>
+      <a class="btn" href="javascript:;" @click.stop="visibleDialog=true">农业银行</a>
+      <a class="btn" href="javascript:;" @click.stop="visibleDialog=true">交通银行</a>
     </div>
   </div>
   </div>
+
+  <a-modal v-model:visible="visibleDialog" title="支付确认" cancelText="取消支付"
+           @ok="handleOk" okText="确定支付">
+    <h2>新风尚，校园购</h2>
+    <p>订单号： {{orderId}}</p>
+    <p>商品名称： 新风尚</p>
+    <p>交易金额： {{order.payMoney}}</p>
+  </a-modal>
 </template>
 
 <script>
-import {Steps,Step, Table,Button,Checkbox,Radio,RadioGroup,Tag} from 'ant-design-vue'
+import { Steps, Step, Table, Button, Checkbox, Radio, RadioGroup, Tag, Modal } from 'ant-design-vue'
 import { computed, ref } from 'vue'
 import {useRouter,useRoute} from 'vue-router'
-import { showOrderGet } from '@/api/shop'
+import { showOrderGet, updateOrderPut } from '@/api/shop'
 const routerPath = {
   0:'/cart',
   1: '/payment_settlement'
@@ -56,11 +64,13 @@ export default {
     const router = useRouter()
     const orderId = ref(null)
     const route = useRoute()
+    const visibleDialog =ref(false)
     // 倒计时工具函数
     const { start, timerText } = usePyTimer()
     function changeSteps(item){
       router.push(routerPath[item])
     }
+    orderId.value = route.query.orderId
     showOrderGet({orderId:route.query.orderId}).then(item=>{
       order.value = item
       if(item.countdown>-1){
@@ -68,18 +78,45 @@ export default {
       }
     })
 
+    function handleClose(){
 
-
+    }
+    function handleOk(){
+      updateOrderPut({orderId:orderId.value,orderState:2}).then(()=>{
+        visibleDialog.value = false
+        let secondsToGo = 3;
+        const modal = Modal.success({
+          title: '支付成功',
+          content: `即将未您跳转购物页面 ${secondsToGo} .`,
+        });
+        const interval = setInterval(() => {
+          secondsToGo -= 1;
+          modal.update({
+            content: `即将未您跳转购物页面 ${secondsToGo} .`,
+          });
+        }, 1000);
+        setTimeout(() => {
+          clearInterval(interval);
+          modal.destroy();
+          router.push('/')
+        }, secondsToGo * 1000);
+      }).catch(()=>{
+        console.log('支付失败')
+      })
+    }
 
     return {
       changeSteps,
       timerText:computed(()=>timerText.value),
       order,
+      orderId,
       stepStyle: {
         marginBottom: '60px',
         boxShadow: '0px -1px 0 0 #e8e8e8 inset',
       },
-
+      handleClose,
+      visibleDialog,
+      handleOk
     }
   }
 }
@@ -103,7 +140,8 @@ const usePyTimer = ()=>{
   }
   return {
     start,
-    timerText
+    timerText,
+
   }
 
 }

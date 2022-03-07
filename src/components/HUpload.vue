@@ -1,5 +1,5 @@
 <template>
-  <div class="clearfix">
+  <div class="clearfix" v-if="inputStat">
 <!--    <template v-if="fileList.length">-->
 <!--      <a-img  :src="item" alt="avatar"   v-for="item in fileList" :key="item"/>-->
 <!--    </template>-->
@@ -25,12 +25,15 @@
     <img alt="example" style="width: 100%" :src="imageUrl" />
   </a-modal>
   </div>
+  <div v-else>
+    <el-input v-model="pictureModel" @blur="setPicture"></el-input>
+  </div>
 </template>
 
 <script>
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import { defineComponent, ref, toRaw } from 'vue'
+import { defineComponent, reactive, ref, toRaw,computed } from 'vue'
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -67,6 +70,10 @@ export default {
     imgDates:{
       type:Array,
       default:[]
+    },
+    inputStat:{
+      default:false,
+      type: Boolean
     }
   },
   setup(props,{emit}) {
@@ -127,8 +134,27 @@ export default {
       const imgList = getImgPath(toRaw(fileList.value))
       emit('success',imgList)
     }
+  const shopData = reactive({
+    picture:[]
+  })
+    const pictureModel = computed({
+      get(){
+        if(shopData.picture.length===0) return ''
+        return shopData.picture.join(',')
+      },
+      set(value){
+        shopData.picture = value.split(',')
+      }
+    })
+    function setPicture(){
+      console.log('==》',shopData.picture)
+      emit('success',shopData.picture)
+    }
 
       return {
+        shopData,
+        pictureModel,
+        setPicture,
         fileList,
         loading,
         imageUrl,

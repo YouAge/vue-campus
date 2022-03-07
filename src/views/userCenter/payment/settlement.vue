@@ -29,7 +29,6 @@ import { computed, reactive, ref } from 'vue'
 import {Steps,Step, Table,Button,Checkbox,Radio,RadioGroup,Tag} from 'ant-design-vue'
 import {useRouter} from 'vue-router'
 import OrderPage from '@/views/userCenter/components/orderPage.vue'
-import { useAddress} from '@/hooks/useAddress.js'
 import {useStore} from 'vuex'
 export default {
   name: 'settlement',
@@ -47,6 +46,7 @@ export default {
     })
     const current = ref(1);
     const router = useRouter()
+    
     const settlementData = computed(() =>store.getters.orderGoods)
     const orderMoney = computed(() =>store.getters['cart/orderMoney'])
     function changeSteps(){

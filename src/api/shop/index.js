@@ -27,6 +27,15 @@ export  async function cateShopGet(data){
   return await Api.get('/goods-list',{params:data})
 }
 
+//获取首页商品数据
+export async function tagShopHome(){
+  return await Api.get('/tag-list')
+}
+
+//
+export async function addGoodsBrowse(data){
+  return await Api.put('/goods-browse',data)
+}
 
 
 // 获取商品详情
@@ -77,4 +86,36 @@ export async function updateOrderPut(data){
 }
 export async function showOrderGet(data){
   return await  Api.get('/order',{params:data})
+}
+
+export async function updateUserInfo(data){
+  return await Api.put('/user-info',data)
+}
+
+
+
+
+
+
+/**
+ * 查询商品评价信息
+ * @param {String} id - 商品ID
+ * @returns
+ */
+export const findGoodsCommentInfo = (id) => {
+  // return request(`/goods/${id}/evaluate`, 'get')
+  // axios 遇见 http https 开头的地址，不会加上基准地址
+  // return Api.get(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`)
+  return Api.get(`/evaluate`)
+}
+
+/**
+ * 查询商品评价列表
+ * @param {String} id - 商品ID
+ * @param {Object} params - 商品ID
+ * @returns
+ */
+export const findGoodsCommentList = (id, params) => {
+  // return Api.get(`https://mock.boxuegu.com/mock/1175/geoods/${id}/evaluate/page`, params)
+  return Api.get(`/evaluate/page`, params)
 }

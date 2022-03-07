@@ -10,7 +10,7 @@
           <h-menu-item :menu-item="item"/>
         </template>
         <template v-else>
-          <a-menu-item :key="item.path">{{item.meta.title}}</a-menu-item>
+          <a-menu-item :key="item.path" v-if="!item.hidden">{{item.meta.title}}</a-menu-item>
         </template>
       </template>
     </a-sub-menu>

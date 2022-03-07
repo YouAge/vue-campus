@@ -25,7 +25,7 @@
         <template  #info="{ column ,record }">
 <!--          {{ record}}-->
             <div class="goods">
-              <RouterLink :to="`/shop/product/${record.goods.id}`">
+              <RouterLink :to="`/product/${record.goods.id}`">
                 <img :src="record.goods.picture[0]" alt="">
               </RouterLink>
               <div>
@@ -134,6 +134,7 @@ export default {
     }) // 选择后的计算总价
     // 全选
     function checkAll(rows,selectedRows){
+      console.log('---',rows,selectedRows)
       store.commit('cart/setSelectedRow',rows)
     }
     //删除
@@ -150,6 +151,7 @@ export default {
       stepStyle: {
         marginBottom: '60px',
         boxShadow: '0px -1px 0 0 #e8e8e8 inset',
+        border:  '1px solid #f5f5f5',
       },
       checkAll,
       columns,
@@ -185,6 +187,7 @@ export default {
 .goods {
   display: flex;
   align-items: center;
+
   img {
     width: 100px;
     height: 100px;

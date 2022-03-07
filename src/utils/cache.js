@@ -2,7 +2,6 @@
 import Cookie from 'js-cookie'
 
 
-
 export function setAccessToken(key='AuthToken',token){
   Cookie.set(key,token)
 }
@@ -13,7 +12,7 @@ export function getAccessToken(name='AuthToken'){
 
 /** 删除token */
 export function delAccessToken (name='AuthToken') {
-  return Cookies.remove(name)
+  Cookie.remove(name)
 }
 
 

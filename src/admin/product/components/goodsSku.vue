@@ -11,7 +11,9 @@
     </vxe-column>
     <vxe-column field="picture" title="图片">
       <template #default="{ row }">
-        <a-image  :width="200" :src="row.picture"/>
+        <div>
+          <a-image  :width="20" style="height: 50px" :src="row.picture" v-if="row.picture"/>
+        </div>
       </template>
     </vxe-column>
     <vxe-column field="price" title="原价" :edit-render="{}">

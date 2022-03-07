@@ -1,143 +1,96 @@
 <template>
-  <div style="height: 60px"></div>
-<div class="content">
-  <Carousel dot-position="left" ref="varousel" :afterChange="dotNumber">
-    <div v-for="item in carouseDateImg" :key="item.id" class="carousel">
-      <img :src="item.img" class="carousel-img"/>
+  <div class="app-header-carousel">
+    <div class="f-header">
+      <!--  <div></div>-->
+      <home-category />
+      <div class="f-carousel">
+        <img src="https://s10.mogucdn.com/mlcdn/c45406/200518_482bj515c0a2lb0abg0b60hl2h5l8_1134x440.jpg">
+      </div>
     </div>
-  </Carousel>
-  sada
-</div>
+  </div>
+
+  <div class="f-content">
+    <HomeCardContet v-for="item in homeData" :key="item.id" :home-item="item" />
+  </div>
+
+
 </template>
 
 <script>
-import { Carousel } from 'ant-design-vue'
-import { computed, onMounted, ref ,onUnmounted} from 'vue'
-import { debounce, throttle } from '@/utils/pubils.js'
-import { useStore } from 'vuex'
-
-const carouseEnum ={
-  prev:0,
-  next:1,
-}
-const carouseDateImg = [
-  {id:0, img:require('@/assets/img/shop/home/3-T1.jpg'),title:'',children:[]},
-  {id:1, img:require('@/assets/img/shop/home/5-T1.jpg'),title:'',children:[]},
-  {id:2, img:require('@/assets/img/shop/home/4-T1.jpg'),title:'',children:[]},
-  {id:3, img:require('@/assets/img/shop/home/6-T1.jpg'),title:'',children:[]},
-  {id:4, img:require('@/assets/img/shop/home/7-T3.jpg'),title:'',children:[]},
-  {id:5, img:require('@/assets/img/shop/home/3.jpg'),title:'',children:[]}
-]
-
-
+import HomeMenus from "@/components/HomeMenus";
+import HomeCardContet from "@/components/HomeCardContet";
+import HomeCategory from '@/components/home-category.vue'
+import { headGet, tagShopHome } from '@/api/shop'
+import AppFooter from '@/views/AppFooter.vue'
+import { mapActions, mapGetters ,mapState} from 'vuex'
 export default {
-  name: 'Home',
   components: {
-    Carousel
+    AppFooter,
+    HomeCategory,
+    HomeCardContet, HomeMenus},
+  data(){
+    return{
+      homeData:[],
+    }
   },
-  setup () {
-    const store = useStore()
-    store.commit('home/setFooterShow', false)
-    const timer = 1000
-    const varousel = ref(null)
-    const carouseIndex = ref(0)
-    const dataIndexLength = carouseDateImg.length -1
-
-
-    function dotNumber (index) {
-      carouseIndex.value = index
-      if (index === dataIndexLength) {
-        store.commit('home/setFooterShow', true)
-      } else {
-        store.commit('home/setFooterShow', false)
-      }
-    }
-    const thrVarousel = throttle(timer)
-    function slideCarousel (item){
-      if( item === 'next' ){
-        if( carouseIndex.value === dataIndexLength) return
-        // throttle(function () {
-        //   varousel.value.next()
-        // }, timer)()
-        thrVarousel(()=>{varousel.value.next()})
-      }
-      else{
-        // 获取滚动跳，到0时 才出发 走马灯
-        let osTop = document.documentElement.scrollTop || document.body.srcollTop;
-        console.log(carouseIndex.value === dataIndexLength ,osTop,osTop === undefined )
-        if(carouseIndex.value === dataIndexLength && osTop !== undefined && osTop >0) return
-        // throttle(() => {
-        //   varousel.value.prev()
-        // }, timer)()
-        thrVarousel(()=>{varousel.value.prev()})
-      }
-
-    }
-
-    onMounted(() => {
-      document.onmousewheel = function (e) {
-        e = e || window.event
-        if (e.wheelDelta) {
-          if (e.wheelDelta > 0) {
-            console.log('prev',e.wheelDelta,e.wheelDelta > 0)
-            slideCarousel('prev')
-          }
-          if (e.wheelDelta < 0) {
-            console.log('next',e.wheelDelta)
-            slideCarousel('next')
-          }
-        } else if (e.detail) {
-          if (e.detail > 0) {
-            throttle(() => {
-              console.log('下滚')
-            }, timer)()
-          }
-          if (e.detail < 0) {
-            throttle(() => {
-              console.log('上滚')
-            }, timer)()
-          }
-        }
-      }
+  computed:{
+    ...mapState({
+      headMenus:state=>state['shop/headMenus']
     })
+  },
+  methods:{
+    httpHomeTag(){
+      tagShopHome().then(item=>{
+        this.homeData = item
+      })
+    },
 
-    onUnmounted(()=>{
-      //销毁页面是，显示底部
-      store.commit('home/setFooterShow', true)
-      document.onmousewheel = function (){}
-    })
 
-    return {
-      varousel,
-      dotNumber,
-      store,
-      carouseDateImg
+  },
+  created () {
+    this.httpHomeTag()
+  }
+
+}
+</script>
+
+<style lang="less" scoped>
+.app-header-top{
+  width: 710px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+.app-header-carousel{
+  height: 500px;
+  width: 100%;
+  border-top: 2px solid #FF4466;
+  background-color: #CCEAE2;
+  box-sizing: border-box;
+  text-align: center;
+
+}
+.f-content,
+.f-header{
+  width: 75%;
+  margin: auto;
+  //width: 1240px;
+  //margin: 0 auto;
+  position: relative;
+  //display: flex;
+  .f-carousel{
+    //width: 1274px;
+    //width: 85%;
+    height: 500px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 98;
+    img{
+      height: 100%;
+      width: 100%;
     }
   }
 }
-</script>
-<style scoped lang="less">
-.content{
-  margin-top: 12px;
-}
-.ant-carousel :deep(.slick-slide) {
-  text-align: center;
-  height: calc( 100vh - 72px);
-  line-height: 160px;
-  background: #364d79;
-  overflow: hidden;
-}
 
-.carousel{
-  height: calc( 100vh - 72px);
-  width: 100%;
-}
-.ant-carousel :deep(.slick-slide h3) {
-  color: #fff;
-}
-
-.carousel-img{
-  width: 100%;
-  height: 100%;
-}
 </style>

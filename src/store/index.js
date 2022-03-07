@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import home from './modules/home.js'
 import shop from '@/store/modules/shop.js'
 import cart from '@/store/modules/cart.js'
+import adminUser from '@/store/modules/adminUser.js'
 export default createStore({
   getters: {
     footerShow: state => state.home.footerShow,
@@ -13,13 +14,16 @@ export default createStore({
 
     // 购物商品
     orderGoods: (state, getters) => getters['cart/orderGoods'],
-    address: state => state.home.address
+    address: state => state.home.address,
     // admin:
-    // adminToken: this.state
+    adminToken: state =>state.adminUser.adminToken,
+    adminLoginStatus: state=>state.adminUser.loginStatus,
+    adminUserInfo:state => state.adminUser.adminUser
   },
   modules: {
     home,
     shop,
-    cart
+    cart,
+    adminUser
   }
 })

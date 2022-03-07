@@ -1,27 +1,23 @@
 <template>
-  <AppHeader />
-  <router-view />
-  <AppFooter v-if="store.getters.footerShow"/>
+  <app-header />
+  <div class="app-content">
+    <router-view />
+  </div>
+  <app-footer />
 </template>
 
 <script>
-import AppHeader from './components/AppHeader.vue'
-import AppFooter from './components/AppFooter.vue'
-import {useStore} from 'vuex'
+import AppHeader from "@/views/Layout/AppHeader";
+import AppFooter from '@/views/AppFooter.vue'
 export default {
-  name: 'index',
-  components: { AppHeader, AppFooter },
-  setup () {
-    const store = useStore()
-    store.dispatch('shop/getMenus')
-    // 获取 菜单
-    return {
-      store
-    }
-  }
+  name: "index",
+  components: {AppHeader,AppFooter}
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="less">
+.app-content{
+  background-color: #F3F3F3;
+  min-height: 500px;
+}
 </style>

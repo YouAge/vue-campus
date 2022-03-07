@@ -1,13 +1,14 @@
 {
-  "name": "vue-campus",
+  "name": "campus",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^0.2.6",
+    "element-plus": "^1.3.0-beta.8",
     "@tinymce/tinymce-vue": "^4.0.5",
     "@vueuse/core": "^7.2.2",
     "ant-design-vue": "^2.2.8",

@@ -8,6 +8,22 @@ import store from '@/store'
 export function createPermission(router){
 
   router.beforeEach(async (to,from,next)=>{
+    console.log('===路由=>',to)
+    if(/^\/admin\//.test(to.fullPath)){
+      const adminToken = getAccessToken('admintoken')
+      if(adminToken && !store.getters.adminLoginStatus){
+        await store.dispatch('adminUser/getUserInfo').catch(()=>{
+          store.commit('adminUser/removeToken')
+          return next({path:'/login',query:{redirect:to.fullPath}})
+        })
+        return  next({...to,redirect: true})
+      }
+      if(!adminToken) {
+        return await next({path:'/login-admin',query:{redirect:to.fullPath}})
+      }else {
+       return  await next()
+      }
+    }
     const token = getAccessToken()
     if(token && !store.getters.loginStatus){ // 防止刷新后，用户信息失效
       await store.dispatch('home/getUserInfo')
