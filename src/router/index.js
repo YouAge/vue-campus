@@ -31,6 +31,7 @@ const routes = [
         children: [
           { path: 'member',meta:{title:'个人中心',author:true}, component: ()=>import('@/views/userCenter/home/index.vue') },
           {path: 'address',meta:{title: '地址管理'},author:true,component:()=>import('@/views/userCenter/home/address.vue') },
+          {path: 'collect',meta:{title: '我的收藏'},author:true,component:()=>import('@/views/userCenter/home/collect.vue') },
           { path: 'order',meta:{title:'订单信息',author:true},component: ()=>import('@/views/userCenter/order/index.vue')},
           { path: 'order/:id',meta:{title:'订单详情',author:true},component:()=>import('@/views/userCenter/order/detail.vue')
             // component:{render:()=>h(<RouterView />)},

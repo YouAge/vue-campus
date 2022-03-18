@@ -1,17 +1,16 @@
 
 <template>
-    <RouterLink :to="`/shop/product/${goods.id}`" class='goods-item'>
-      <img :src="Array.isArray(goods.picture)?goods.picture[0]:goods.picture" alt="">
-      <p class="name ellipsis">{{goods.name}}</p>
-      <p class="desc ellipsis">{{goods.desc}}</p>
-      <p class="price">&yen;{{goods.price}}</p>
-    </RouterLink>
+  <RouterLink :to='`/`' class='goods-item'>
+    <img :src="Array.isArray(goods.picture)?goods.picture[0]:goods.picture" alt="">
+    <p class="name ellipsis">{{goods.name}}</p>
+    <p class="desc ellipsis">{{goods.desc}}</p>
+    <p class="price">&yen;{{goods.price}}</p>
+  </RouterLink>
 </template>
 
 
 <script>
 export default {
-  name: 'GoodsItem',
   props: {
     goods: {
       type: Object,

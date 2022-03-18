@@ -142,6 +142,21 @@ export default {
 </script>
 
 <style scoped lang='less'>
+.info{
+  .name {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    //display: -webkit-box;
+    //-webkit-box-orient: vertical;
+    //-webkit-line-clamp: 2;
+    //overflow: hidden;
+  }
+}
+
+.ellipsis{
+ margin-top: 10px;
+}
 .order-info {
   padding: 0 50px;
   h3 {
@@ -189,8 +204,12 @@ export default {
       padding-left: 20px;
       text-align: left;
       p {
-        margin-bottom: 5px;
+        //margin-bottom: 5px;
+        display: block;
         width: 280px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
       }
       .attrs {
         color: #999;

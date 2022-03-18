@@ -9,6 +9,7 @@ export default {
     checkBox:{
       checkAll:false
     },
+
   },
   getters:{
     indeterminate(state){
@@ -24,6 +25,7 @@ export default {
       let sumNumber =0
       let countMoney=0 // 运费
       let goodsMoney=0
+      let freight = 0
       if(getters.orderGoods.length===0) return {sumNumber,countMoney,goodsMoney}
       getters.orderGoods.forEach(item=>{
         sumNumber += item.shopNumber
@@ -31,11 +33,12 @@ export default {
         const number = item.shopNumber
         goodsMoney += Math.round(price*100)*number/100
       })
-      goodsMoney = Math.round(goodsMoney*100)/10
+      goodsMoney = Math.round(goodsMoney*100)/100
       return {
         sumNumber,
         goodsMoney,
-        countMoney: goodsMoney + 12
+        freight,
+        countMoney: goodsMoney +freight
       }
     }
   },
@@ -66,14 +69,25 @@ export default {
       state.selectedRowKeys.forEach(item=>{
         state.cartData.splice(item,1)
       })
-
     }
 
   },
 
   actions:{
-    async delCartHttp(){
-
+    async delCartHttp({state,commit,dispatch},row){
+      let delIds =[]
+      if(!row){
+        for (let index of state.selectedRowKeys){
+          console.log(state.cartData[index], this.state.cartData)
+          delIds.push(state.cartData[index].id)
+        }
+      }else {
+        delIds = [row.id]
+      }
+      delCartPatch({cartIds:delIds}).then(()=>{
+        commit('delSelectGoods')
+        dispatch('getCartHttp')
+      })
     },
 
     async getCartHttp({commit}){
@@ -95,6 +109,9 @@ export default {
           desc:item.goods.desc
         })
       })
+      if(!data.address){
+        return  this.$message.warning('收获地址不能为空')
+      }
      const item = addOrderPost({
        address:data.address,goods,payMoney:getters.orderMoney.goodsMoney,
         shopNumber:getters.orderMoney.sumNumber})

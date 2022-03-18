@@ -5,16 +5,16 @@
       <el-button @click="addressStatus =true">新增收获地址</el-button>
     </div>
 
-    <div style="padding: 30px;" v-if="addressStatus">
+    <div style="padding: 30px;background-color: #FFFFFF;color: #000000;font-size: 16px;" v-if="addressStatus">
       <div class="user-title">
         <span>编写收获地址</span>
       </div>
-      <el-form label-width="110px">
-        <el-form-item label="收件人姓名">
+      <el-form label-width="110px" :rules="rules" ref="addRefModel" :model="addForm">
+        <el-form-item label="收件人姓名" prop="name">
           <el-input v-model="addForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="addForm.iphone"></el-input>
+        <el-form-item label="手机号" prop="iPhone">
+          <el-input v-model="addForm.iPhone"></el-input>
         </el-form-item>
         <el-form-item label="所在地：" name="fullLocation">
           <HCity class="ant-form-item-control-input-content" :fullLocation="addForm.fullLocation" @change="changeCity" placeholder="请选择所在地区"/>
@@ -31,11 +31,9 @@
         </el-form-item>
       <el-form-item>
         <div style="display: flex;">
-          <el-button>保存</el-button>
+          <el-button @click="submitAdd">保存</el-button>
           <el-button @click="addressStatus =false">取消</el-button>
         </div>
-
-
       </el-form-item>
       </el-form>
     </div>
@@ -44,7 +42,7 @@
     <div>
 
     </div>
-    <div class="radio-item"  v-for="item in showAddress" :key="item.id">
+    <div class="radio-item"  v-for="item in address" :key="item.id">
       <div class="radio-style" :value="item.id">
         {{item.name}} {{item.fullLocation}} {{item.address}} +86-{{item.iPhone}}
         <Tag color="red" v-if="item.isDefault"> 默认地址 </Tag>
@@ -52,7 +50,7 @@
       <div class="radio-edit">
         <span>设为默认</span>
         <span>编辑</span>
-        <span>删除</span>
+        <span @click="dealAdd(item)">删除</span>
       </div>
     </div>
 
@@ -63,7 +61,9 @@
 <script>
 import HomeOverview from '@/views/userCenter/home/components/home-overview.vue'
 import HCity from '@/components/HCity.vue'
-import {Tag} from 'ant-design-vue'
+import { message, Tag } from 'ant-design-vue'
+import { addAddressPost, delAddressPatch, showAddressGet } from '@/api/shop'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'address',
   components: { HCity, HomeOverview,Tag },
@@ -71,26 +71,64 @@ export default {
     return {
       addressStatus:false,
       addForm:{
-        name:'小明',
-        iPhone:'15607191234',
+        name:'',
+        iPhone:'',
         fullLocation:'',
-        address:'成都新城',
+        address:'',
         postalCode:''
       },
       showAddress:[
         {
-          name:'小明',
-          iPhone:'15607191234',
+          name:'',
+          iPhone:'',
           fullLocation:'',
-          address:'成都新城',
+          address:'',
           postalCode:''
         },
-      ]
+      ],
+      rules: {
+        name: [{ required: true, message: '收件人名不能为空' }],
+        iPhone: { required: true, message: '手机号不能为空' },
+      }
     }
   },
+  computed:{
+    ...mapGetters([
+      'userInfo',
+      'address'
+    ])
+  },
+  created () {
+    this.getShowAddress()
+  },
   methods:{
+    getShowAddress(){
+      showAddressGet().then(item=>{
+        this.$store.commit('home/setAddress',item)
+      })
+},
     changeCity(value){
       this.addForm.fullLocation = value.fullLocation
+    },
+    submitAdd(){
+      console.log(this.addForm,  this.$refs.addRefModel)
+      this.$refs.addRefModel.validate((item,object)=> {
+        console.log(object)
+        addAddressPost(this.addForm).then((item) => {
+          this.$refs.addRefModel.resetFields()
+          this.$message.success('新增地址成功')
+          this.addressStatus = false
+          this.getShowAddress()
+        })
+      })
+    },
+
+    dealAdd(item){
+      console.log(item)
+      delAddressPatch({ids:[item.id]}).then(()=>{
+        this.$message.success('地址删除成功')
+        this.getShowAddress()
+      })
     }
   }
 }
@@ -128,7 +166,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   border: 1px solid #efefef;
-  background: #fafafa;
+  background: #fff;
   margin-top: 10px;
   padding: 13px 17px;
   &:hover{

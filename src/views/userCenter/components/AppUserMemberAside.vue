@@ -20,7 +20,7 @@
       </div>
       <h4>我的收藏</h4>
       <div class="links">
-        <a href="javascript:;">收藏的商品</a>
+        <RouterLink active-class="active" to="/user/collect">收藏的商品</RouterLink>
         <a href="javascript:;">收藏的专题</a>
         <a href="javascript:;">关注的品牌</a>
       </div>

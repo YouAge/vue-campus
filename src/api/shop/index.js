@@ -64,7 +64,7 @@ export async function addAddressPost(data){
   return await  Api.post('/address',data)
 }
 export async function delAddressPatch(data){
-  return await  Api.patch('/address',data)
+  return await  Api.post('/del-address',data)
 }
 export async function updateAddressPut(data){
   return await  Api.put('/address',data)
@@ -118,4 +118,8 @@ export const findGoodsCommentInfo = (id) => {
 export const findGoodsCommentList = (id, params) => {
   // return Api.get(`https://mock.boxuegu.com/mock/1175/geoods/${id}/evaluate/page`, params)
   return Api.get(`/evaluate/page`, params)
+}
+
+export const  findGoodsColl= async ()=>{
+  return await Api.get('http://pcapi-xiaotuxian-front-devtest.itheima.net/goods/relevant?id=&limit=16')
 }

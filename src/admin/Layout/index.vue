@@ -1,7 +1,7 @@
 <template>
   <a-layout class="admin-layout">
   <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-    <div class="logo" v-if="!collapsed">
+    <div class="logo" v-if="!collapsed" style="color: #000">
       新风尚管理平台
     </div>
     <div class="logo" v-else style="font-size: 14px">新风尚</div>
@@ -98,6 +98,7 @@ export default defineComponent({
 </script>
 <style scoped lang="less">
 
+
 .admin-layout{
   min-height: 100vh;
   box-sizing: border-box;
@@ -105,6 +106,8 @@ export default defineComponent({
 .ant-layout-sider{
   min-height: 100%;
   position: fixed;
+  background-color: #FFFFFF;
+  color: #000000;
 }
 .admin-layout-left{
   margin-left: 200px;

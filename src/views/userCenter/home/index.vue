@@ -5,7 +5,7 @@
       <span>基本信息</span>
     </div>
 
-    <div style="padding: 30px">
+    <div style="padding: 30px;background-color: #FFFFFF;color: #000000;font-size: 16px;">
       <el-form v-model="userInfo" label-width="100px">
         <el-form-item label="用户名">
           <el-input v-model="userInfo.username"></el-input>
@@ -40,9 +40,9 @@
     </div>
 
     <div class="user-title">
-      <span>{{userInfo.password?'修改密码':'添加登入密码'}}</span>
+      <span>{{userInfo.password?'修改密码':'设置登入密码'}}</span>
     </div>
-    <div style="padding: 30px;">
+    <div style="padding: 30px;background-color: #FFFFFF;color: #000000;font-size: 16px;">
       <el-form label-width="100px" :rules="rules" :model="password" ref="pwdRef">
         <template v-if="userInfo.password">
           <el-form-item label="旧密码" prop="pwd1">
@@ -134,6 +134,7 @@ export default {
 .user-title{
   background-color: #F9F9F9;
   padding: 10px;
+  margin-top: 15px;
   span{
     color: #FF4466;
     font-size: 16px;

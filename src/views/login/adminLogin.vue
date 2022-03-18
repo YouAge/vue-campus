@@ -24,7 +24,7 @@
         <a-form :model="formState" :rules="rules" ref="formRef" hideRequiredMark>
 
             <a-form-item name="username">
-              <a-input placeholder="手机号" v-model:value="formState.username" allowClear>
+              <a-input placeholder="管理员账号" v-model:value="formState.username" allowClear>
                 <template #prefix>
                   <user-outlined type="user" />
                 </template>

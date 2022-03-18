@@ -156,6 +156,11 @@ export default {
               padding: 0 10px;
               p {
                 margin-bottom: 5px;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                box-sizing: border-box;
                 &.name {
                   height: 38px;
                 }

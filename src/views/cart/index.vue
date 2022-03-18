@@ -21,7 +21,7 @@
     <div class="cart">
       <Table
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: checkAll }" :pagination="false"
-        :columns="columns"  :data-source="cartData">
+        :columns="columns"  :data-source="cartData" v-if="cartData.length>0">
         <template  #info="{ column ,record }">
 <!--          {{ record}}-->
             <div class="goods">
@@ -53,15 +53,18 @@
         </template>
         <template #config="{record}">
           <p><a href="javascript:;">移入收藏夹</a></p>
-          <p><a @click="deleteCart(record.skuId)" class="green" href="javascript:;">删除</a></p>
+          <p><a @click="deleteCart(record)" class="green" href="javascript:;">删除</a></p>
         </template>
       </Table>
+      <el-empty v-else description="购物车还是空的，快来挑选好货吧">
+        <el-button type="primary" size="mini" @click="$router.push('/')">跳转</el-button>
+      </el-empty>
     </div>
     <!--      //选择统计 计算-->
     <div class="action">
       <div class="batch">
         <Checkbox v-model:checked="isCheckAll" :indeterminate="indeterminate" >全选</Checkbox>
-        <Button @click="deleteCart">删除商品</Button>
+        <Button @click="deleteCart('')">删除商品</Button>
         <Button >移入收藏夹</Button>
       </div>
       <div class="total">
@@ -74,13 +77,14 @@
 </template>
 
 <script>
-import { Steps, Step, Table, Button, Checkbox, message } from 'ant-design-vue'
-import { computed, ref,onMounted } from 'vue'
+import { Steps, Step, Table, Button, Checkbox, message, Modal } from 'ant-design-vue'
+import { computed, ref, onMounted, createVNode } from 'vue'
 import HCheckbox from '@/components/HCheckbox.vue'
 import HNumber from '@/components/HNumber.vue'
 import { useRouter} from 'vue-router'
 import { Mart } from '@/utils/message.js'
 import {useStore} from 'vuex'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 const columns = [
   {title:'商品信息',align:'center',  dataIndex:'info', key:'info',  slots: {
       customRender: 'info',
@@ -105,7 +109,7 @@ export default {
   components:{
     HNumber,
     HCheckbox,Button,
-    Steps,Step,Table,Checkbox
+    Steps,Step,Table,Checkbox,Modal,message,ExclamationCircleOutlined
   },
   setup(){
     const store = useStore()
@@ -126,9 +130,11 @@ export default {
       let money = 0
       if(selectedRowKeys.value.length === 0) return money
       selectedRowKeys.value.forEach(value=>{
-        const price = cartData.value[value].goodsSku.price
-        const number = cartData.value[value].shopNumber
-        money += Math.round(price*100)*number/100
+        if(cartData.value[value]){
+          const price = cartData.value[value].goodsSku.price
+          const number = cartData.value[value].shopNumber
+          money += Math.round(price*100)*number/100
+        }
       })
       return Math.round(money*100)/100
     }) // 选择后的计算总价
@@ -138,8 +144,45 @@ export default {
       store.commit('cart/setSelectedRow',rows)
     }
     //删除
-    function deleteCart(){
-      if(selectedRowKeys.value.length ===0) return Mart({content:"请先选择要购买的商品"})
+    function deleteCart(row){
+      if(row){
+        Modal.confirm({
+          title: () => '删除提醒',
+          icon: () => createVNode(ExclamationCircleOutlined),
+          content: () => '确定要删除选中的商品吗？',
+          okText: () => '确定',
+          okType: 'danger',
+          cancelText: () => '取消',
+          onOk() {
+            store.dispatch('cart/delCartHttp',row).then(()=>{
+              message.success('删除成功')
+            })
+          },
+          onCancel() {
+            message.info('取消了该操作')
+          },
+        });
+      }else {
+        if(selectedRowKeys.value.length ===0) return Mart({content:"请先选择要购买的商品"})
+        Modal.confirm({
+          title: () => '删除提醒',
+          icon: () => createVNode(ExclamationCircleOutlined),
+          content: () => '确定要删除选中的商品吗？',
+          okText: () => '确定',
+          okType: 'danger',
+          cancelText: () => '取消',
+          onOk() {
+            store.dispatch('cart/delCartHttp',row).then(()=>{
+              message.success('删除成功')
+            })
+          },
+          onCancel() {
+            message.info('取消了该操作')
+          },
+        });
+      }
+
+
     }
     // 下单
     function checkout(){

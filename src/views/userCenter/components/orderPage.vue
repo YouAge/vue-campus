@@ -86,7 +86,7 @@
       <div class="total">
         <dl><dt>商品件数：</dt><dd>{{orderMoney.sumNumber}}件</dd></dl>
         <dl><dt>商品总价：</dt><dd>¥{{orderMoney.goodsMoney}}</dd></dl>
-        <dl><dt>运<i></i>费：</dt><dd>¥{{12}}</dd></dl>
+        <dl><dt>运<i></i>费：</dt><dd>¥{{orderMoney.freight}}</dd></dl>
         <dl><dt>应付总额：</dt><dd class="price">¥{{orderMoney.countMoney}}</dd></dl>
       </div>
     </div>

@@ -36,8 +36,8 @@ instance.interceptors.response.use(async res=>{
   if(message === '查询成功'){
     return data
   }
-  if([200,'200'].includes(code)){
-    return data.data
+  if([200,'200','1',1].includes(code)){
+    return data.data || data.result
   }else {
     switch (code){
       case 401:

@@ -46,7 +46,7 @@ export default {
     })
     const current = ref(1);
     const router = useRouter()
-    
+
     const settlementData = computed(() =>store.getters.orderGoods)
     const orderMoney = computed(() =>store.getters['cart/orderMoney'])
     function changeSteps(){
@@ -55,6 +55,8 @@ export default {
     const addressValue = ref() // 地址
     //地址
     function submitOrderFn(){
+      // 判断收获地址
+
       // router.push('/payment_pay')
         store.dispatch('cart/submitOrders',{
           address: store.getters.address.find(item=>item.id === addressValue.value)

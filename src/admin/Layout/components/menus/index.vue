@@ -1,6 +1,6 @@
 <template>
 <Menu
-  theme="dark" mode="inline" v-model:selectedKeys="selectedKeys"
+   mode="inline" v-model:selectedKeys="selectedKeys"
   @click="clickMenu"
 >
     <template v-for="item in menuList" :key="item.path">
