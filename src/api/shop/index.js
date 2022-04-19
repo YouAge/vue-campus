@@ -121,5 +121,5 @@ export const findGoodsCommentList = (id, params) => {
 }
 
 export const  findGoodsColl= async ()=>{
-  return await Api.get('http://pcapi-xiaotuxian-front-devtest.itheima.net/goods/relevant?id=&limit=16')
+  return await Api.get('/collect')
 }

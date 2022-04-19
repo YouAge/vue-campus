@@ -11,13 +11,14 @@
       </div>
       <el-form label-width="110px" :rules="rules" ref="addRefModel" :model="addForm">
         <el-form-item label="收件人姓名" prop="name">
-          <el-input v-model="addForm.name"></el-input>
+          <el-input v-model="addForm.name" placeholder="输入收件人姓名"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="iPhone">
-          <el-input v-model="addForm.iPhone"></el-input>
+          <el-input v-model="addForm.iPhone" placeholder="收件人联系方式"></el-input>
         </el-form-item>
         <el-form-item label="所在地：" name="fullLocation">
-          <HCity class="ant-form-item-control-input-content" :fullLocation="addForm.fullLocation" @change="changeCity" placeholder="请选择所在地区"/>
+          <HCity class="ant-form-item-control-input-content"
+                 :fullLocation="addForm.fullLocation" @change="changeCity" placeholder="请选择所在地区"/>
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input
@@ -27,7 +28,7 @@
             placeholder="详细地址"
           />        </el-form-item>
         <el-form-item label="邮政编码">
-          <el-input v-model="addForm.postalCode"></el-input>
+          <el-input v-model="addForm.postalCode" placeholder="邮政编码"></el-input>
         </el-form-item>
       <el-form-item>
         <div style="display: flex;">

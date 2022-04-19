@@ -20,7 +20,7 @@
             <a-dropdown  class="f-dropdown" >
               <!--            <UserOutlined :style="{fontSize: '20px'}"/>-->
 
-              <a-avatar style="background-color: #f56a00">{{adminUserInfo.username}}</a-avatar>
+              <a-avatar :size="40" style="background-color: #f56a00">{{adminUserInfo.username}}</a-avatar>
               <template #overlay>
                 <a-menu @click="setUserPage">
                   <a-menu-item :key="1"><div>我的账户</div></a-menu-item>

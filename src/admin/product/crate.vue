@@ -16,7 +16,7 @@
 
     <template #picture="{record}">
       <div>
-        <a-image :width="200" :src="record.picture" alt=""/>
+        <a-image :width="50" :src="record.picture" alt=""/>
       </div>
     </template>
     <template #value="{record}">

@@ -86,21 +86,21 @@ import { Mart } from '@/utils/message.js'
 import {useStore} from 'vuex'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 const columns = [
-  {title:'商品信息',align:'center',  dataIndex:'info', key:'info',  slots: {
+  {title:'商品信息', width:150,  dataIndex:'info', key:'info',  slots: {
       customRender: 'info',
     },},
-  {title:'单价',align:'center',width:170, dataIndex:'price', key: 'price',slots: {
-    customRender: 'price'
+  {title:'单价', dataIndex:'price', key: 'price',slots: {
+    customRender: 'price',width:50,
     }},
-  {title:'数量',align:'center',width:130, dataIndex:'shopNumber',key: 'shopNumber',slots: {
-    customRender: 'shopNumber'
+  {title:'数量',dataIndex:'shopNumber',key: 'shopNumber',slots: {
+    customRender: 'shopNumber',width:50
     }},
-  {title:'小计',align:'center',width:170, dataIndex:'subtotal',key: 'subtotal',slots: {
-    customRender: 'subtotal'
+  {title:'小计',dataIndex:'subtotal',key: 'subtotal',slots: {
+    customRender: 'subtotal',width:50
     }
   },
-  {title:'操作',align:'center',width:150, dataIndex:'config',key:'config',slots: {
-    customRender: 'config'
+  {title:'操作', dataIndex:'config',key:'config',slots: {
+    customRender: 'config',width:50
     } },
 ]
 

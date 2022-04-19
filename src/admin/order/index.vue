@@ -17,6 +17,7 @@
       @on-cancel="handlerCancel"
       @on-confirm="handlerConfirm"
       @on-logistics="handlerLogistics"
+      @on-suceess="updateOrder"
       v-for="item in orderList"
       :key="item.id"
       :order="item"
@@ -35,7 +36,7 @@ import HTabsPanel from '@/components/order/HTabsPanel.vue'
 import HTabs from '@/components/order/HTabs.vue'
 import { orderStatus } from '@/utils'
 import OrderItem from './components/orderItem.vue'
-import { showAllOrder } from '@/api/admin/goods.js'
+import { showAllOrder, updateAllOrder } from '@/api/admin/goods.js'
 import HPagination from '@/components/order/HPagination.vue'
 export default {
   name: 'index',
@@ -56,14 +57,18 @@ export default {
       orderList:[]
     }
   },
-  'reqPage':{
-    handler(newName, oldName) {
-      console.log('gaidsfadfasd')
-      this.getOrderHttp()
+  watch:{
+    'reqPage':{
+      handler(newName, oldName) {
+        console.log('gaidsfadfasd')
+        this.getOrderHttp()
+      },
+      // 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
+      immediate: true,
+      deep:true
     },
-    // 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
-    immediate: true
   },
+
   methods:{
     //点击切换 tag
     tabClick({index}){
@@ -85,9 +90,15 @@ export default {
 
     },
 
+    updateOrder(order){
+      updateAllOrder({orderState:Number(order.orderState)+1,orderId:order.orderId}).then(()=>{
+        this.getOrderHttp()
+        this.$message.success('发货成功')
+      })
+    },
     async getOrderHttp(){
       this.loading =  true
-      const data =   await showAllOrder({
+      const data = await showAllOrder({
         pageSize:this.reqPage.pageSize,
         pageIndex:this.reqPage.page,
         orderState: this.reqPage.orderState

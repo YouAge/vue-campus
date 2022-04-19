@@ -71,6 +71,7 @@ export default {
         console.log(to)
         this.hoveId = to.params.id
         this.tagId = this.$route.query.tag
+        this.keyword = this.$route.query.keyword
         this.getCrateHttp()
       },
       deep:true

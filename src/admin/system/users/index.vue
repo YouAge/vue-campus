@@ -1,11 +1,11 @@
 <template>
   <div style="display: flex;align-items: center">
     <div style="font-size: 14px;"> 用户名：</div>
-    <h-input v-model:value="searchUser" placeholder="请输入用户名" width="300px" style="margin-right: 15px;"/>
+    <h-input v-model:value="searchUser" placeholder="用户名搜索" width="300px" style="margin-right: 15px;"/>
     <a-button type="primary" @click="searchAdmin" style="margin-right: 15px;">
       <template #icon><SearchOutlined /></template>搜索</a-button>
     <a-button  @click="delSearch" style="margin-right: 15px;">
-      <template #icon><SearchOutlined /></template>删除</a-button>
+      删除</a-button>
   </div>
 
 <!--  //表格-->

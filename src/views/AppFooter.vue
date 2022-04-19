@@ -28,7 +28,7 @@
             <a href="javascript:;">搜索推荐</a>
             <a href="javascript:;">友情链接</a>
           </p>
-          <p>CopyRight © 风尚间 & 校园购</p>
+          <p>CopyRight © 新风尚 & 校园购</p>
         </div>
       </div>
     </div>

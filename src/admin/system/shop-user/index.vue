@@ -1,11 +1,11 @@
 <template>
   <div style="display: flex;align-items: center">
     <div style="font-size: 14px;"> 用户名：</div>
-    <h-input v-model:value="searchUser" placeholder="请输入用户名" width="300px" style="margin-right: 15px;"/>
+    <h-input v-model:value="searchUser" placeholder="用户名搜索" width="300px" style="margin-right: 15px;"/>
     <a-button type="primary" @click="searchUserFun" style="margin-right: 15px;">
       <template #icon><SearchOutlined /></template>搜索</a-button>
     <a-button  @click="delSearch" style="margin-right: 15px;">
-      <template #icon><SearchOutlined /></template>删除</a-button>
+  删除</a-button>
   </div>
 
   <!--  //表格-->
@@ -16,7 +16,9 @@
   <div class="admin-table-select">
     当前表格已选择 <b>{{0}}</b> 项 <span class="admin-table-clear">清空</span>
   </div>
-  <vxe-grid v-bind="gridOptionsl">
+  <vxe-grid :data="gridOptionsl.data" :columns="gridOptionsl.columns"
+            showHeaderOverflow sync-resize resizable
+            border :max-height="600">
     <template #status="{ row }">
       <el-tag
         class="mx-1"
@@ -28,7 +30,15 @@
             <el-button type="primary" style="margin-right: 10px">编辑</el-button>
             <el-button type="danger" danger @click="updateStatus(row)">{{row.status?'封号':'解封'}}</el-button>
     </template>
-
+    <template #pager>
+      <vxe-pager
+        :layouts="['Sizes', 'PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'FullJump', 'Total']"
+        :current-page.sync="page.pageIndex"
+        :page-size.sync="page.pageSize"
+        :total="page.total"
+        @page-change="currentPage">
+      </vxe-pager>
+    </template>
   </vxe-grid>
 </template>
 
@@ -59,7 +69,7 @@ export default {
         {title:'用户名',field:'username'},
         {title:'邮箱',field:'email'},
         {title:'手机号',field:'iphone'},
-        {title:'创建时间',field:'time'},
+        {title:'创建时间',field:'created_at'},
         {title:'状态',field:'status',slots:{ default: 'status'}},
         {title:'操作',slots:{ default: 'config'}},
       ],
@@ -104,7 +114,8 @@ export default {
       checkAll,
       clearAdmin,
       gridOptionsl,
-      updateStatus
+      updateStatus,
+      page
     }
   }
 }

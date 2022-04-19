@@ -4,13 +4,13 @@
     <DetailAction :order="order" />
 
     <div class="detail-step">
-      <el-steps :active="order.orderState===7?1:order.orderState" align-center>
-        <el-step title="待付款" :description="order.created_at"></el-step>
-        <el-step title="待发货" description=" "></el-step>
-        <el-step title="待收获" description=" "></el-step>
-        <el-step title="待评价" description=" "></el-step>
-        <el-step title="已完成" description=" "></el-step>
-        <el-step title="已取消" description=" "></el-step>
+      <el-steps :active="order.orderState===6?1:order.orderState" align-center>
+        <el-step title="提交订单" :description="order.created_at"></el-step>
+        <el-step title="付款成功" description=" "></el-step>
+        <el-step title="商品发货" description=" "></el-step>
+        <el-step title="确认收货" description=" "></el-step>
+        <el-step title="订单完成" description=" "></el-step>
+<!--        <el-step title="已取消" description=" "></el-step>-->
       </el-steps>
     </div>
 

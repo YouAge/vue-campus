@@ -3,12 +3,16 @@
     <div class="head">
       <span>下单时间：{{order.created_at}}</span>
       <span>订单编号：{{order.orderId}}</span>
-      <span class="down-time" v-if="order.orderState===1">
-        <i class="iconfont icon-down-time"></i>
-        <b>付款截止：{{timeText}}</b>
-      </span>
+<!--      <span class="down-time" v-if="order.orderState===1">-->
+<!--        <i class="iconfont icon-down-time"></i>-->
+<!--        <b>付款截止：{{timeText}}</b>-->
+<!--      </span>-->
     </div>
     <div class="body">
+      <div class="column state">
+        <h7 style="font-weight: bolder">购买用户：</h7>
+        <p>{{order.user && order.user.username}}</p>
+      </div>
       <div class="column goods">
         <ul>
           <li v-for="goods in order.goods" :key="goods.id">
@@ -42,7 +46,7 @@
 <!--        <el-button @click="$router.push(`/payment_pay?orderId=${order.orderId}`)" v-if="order.orderState===1" type="primary" size="small">立即付款</el-button>-->
         <el-button @click="setOrderState" v-if="order.orderState===2" type="primary" size="small">确认发货</el-button>
         <p><a href="javascript:;">查看详情</a></p>
-<!--        <p @click="onCancel" v-if="order.orderState===1"><a href="javascript:;">取消订单</a></p>-->
+        <p @click="onCancel" v-if="order.orderState===1"><a href="javascript:;">删除订单</a></p>
       </div>
     </div>
   </div>
@@ -50,6 +54,9 @@
 <script>
 import { usePayTime } from '@/hooks/useAdminSearch.js'
 import { orderStatus } from '@/utils'
+import { message, Modal } from 'ant-design-vue'
+import { createVNode } from 'vue'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 export default {
   name: 'OrderItem',
   props: {
@@ -59,7 +66,7 @@ export default {
     }
   },
   emits: ['on-cancel', 'on-delete', 'on-confirm', 'on-logistics'],
-  setup (props) {
+  setup (props,{emit}) {
     const { start, timeText } = usePayTime()
     start(props.order.countdown)
     function setSpecs (arry) {
@@ -78,6 +85,22 @@ export default {
     // 确定发货，处理
     function setOrderState(){
       // 更新订单状态
+      console.log(props.order)
+      Modal.confirm({
+        title: () => '发货提醒',
+        content: () => '确定发货商品吗？',
+        okText: () => '确定',
+        okType: 'danger',
+        cancelText: () => '取消',
+        onOk() {
+          emit('onSuceess',props.order)
+          // message.success('发货成功')
+        },
+        onCancel() {
+          message.info('取消了该操作')
+        },
+      });
+
     }
 
     return { orderStatus, timeText ,setSpecs,setOrderState}
@@ -151,6 +174,10 @@ export default {
               padding: 0 10px;
               p {
                 margin-bottom: 5px;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
                 &.name {
                   height: 38px;
                 }

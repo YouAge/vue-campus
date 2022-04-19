@@ -3,7 +3,7 @@
     <!-- 用户信息 -->
     <div class="user-meta">
       <div class="avatar">
-        <img src="http://yjy-xiaotuxian-dev.oss-cn-beijing.aliyuncs.com/avatar/2021-11-30/9c48e7dd-7ea4-44c6-98ad-b0f722330cc1.jpg"/>
+        <img src="@/assets/img.png"/>
       </div>
       <h4>{{userInfo.username}}</h4>
     </div>

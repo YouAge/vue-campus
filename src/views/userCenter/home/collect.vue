@@ -8,7 +8,7 @@
       </div>
       <!-- 商品列表 -->
       <div class="goods-list">
-        <GoodsItem v-for="item in collectGoods.splice(0,4)" :key="item.id" :goods="item" />
+        <GoodsItem v-for="item in collectGoods" :key="item.id" :goods="item" />
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@
       </div>
       <!-- 商品列表 -->
       <div class="goods-list">
-        <GoodsItem v-for="item in collectGoods.splice(0,4)" :key="item.id" :goods="item" />
+        <GoodsItem v-for="item in collectGoods" :key="item.id" :goods="item" />
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@
       </div>
       <!-- 商品列表 -->
       <div class="goods-list">
-        <GoodsItem v-for="item in collectGoods.splice(0,4)" :key="item.id" :goods="item" />
+        <GoodsItem v-for="item in collectGoods" :key="item.id" :goods="item" />
       </div>
     </div>
   </div>
@@ -53,10 +53,10 @@ export default {
   methods:{
 
   },
-  created () {
-    findGoodsColl().then(item=>{
-      this.collectGoods = item
-    })
+ async created () {
+    const item = await findGoodsColl()
+   this.collectGoods = item
+   console.log(this.collectGoods)
   }
 }
 </script>
@@ -77,7 +77,7 @@ export default {
   background-color: #fff;
   padding: 0 20px;
   margin-top: 20px;
-  height: 400px;
+  //height: 400px;
   overflow: hidden;
   .header {
     height: 66px;
@@ -95,6 +95,7 @@ export default {
     display: flex;
     justify-content: space-around;
     padding-top: 20px;
+    flex-wrap: wrap;
   }
 }
 </style>

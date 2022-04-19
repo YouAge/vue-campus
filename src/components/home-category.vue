@@ -109,16 +109,16 @@ export default {
     menuList:function () {
 
       const list = this.headMenus.map((item) => {
-        let goods = []
-        item.children.forEach(g=>{
-          goods = [...goods,...g.goods]
-        })
-        console.log(goods)
+        // let goods = []
+        // item.children.forEach(g=>{
+        //   goods = [...goods,...g.goods]
+        // })
+        // console.log(goods)
         return {
           id: item.id,
           name: item.name,
           children: item.children && item.children.slice(0, 2),
-          goods: goods
+          goods: item.goods
         }
       })
       // list.push(brand)
@@ -151,7 +151,8 @@ export default {
         margin-right: 4px;
         color: #fff;
         &:first-child {
-          font-size: 16px;
+          font-size: 18px;
+          font-weight: bold;
         }
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #FFFFFF;width: 100%">
+  <div style="width: 100%">
     <div class="content-header">
       <!--  商品信息-->
       <div class="goods-info">
@@ -8,7 +8,7 @@
           <GoodsSales />
         </div>
         <div class="spec">
-          <GoodsTitle :goods="goodsInfo"/>
+          <GoodsTitle :goods="goodsInfo" :price="newPrice" :old-price="newOldPrice"/>
           <!--    // 数据选择组件-->
           <GoodsSku :goods="goodsInfo" @change="changeSku" v-if="goodsInfo.skus"/>
           <!--    // 数量选择-->
@@ -26,8 +26,8 @@
           <GoodsWarn />
         </div>
         <!-- 24热榜+周热销榜 -->
-        <div class="goods-aside">
-        </div>
+<!--        <div class="goods-aside">-->
+<!--        </div>-->
       </div>
     </div>
   </div>
@@ -62,13 +62,21 @@ export default {
     // 提供goods数据给后代组件使用
     const inventory = ref(99)
     const currSku = ref(null)
+    const newPrice = ref(0)
+    const newOldPrice = ref(0)
     // 选择的数量
     const num = ref(1)
     function changeSku(item){
       if(item){
         currSku.value = item
         inventory.value = item.sku.inventory
+        newPrice.value = item.sku.price
+        newOldPrice.value = item.sku.oldPrice
+      }else {
+        newPrice.value = 0
+        newOldPrice.value = 0
       }
+      console.log(newPrice.value)
     }
     // 加入购物车
     function insertCart(){
@@ -105,7 +113,7 @@ export default {
     }
 
     return {
-      goodsInfo, changeSku,num,insertCart,inventory
+      goodsInfo, changeSku,num,insertCart,inventory,newPrice,newOldPrice
     }
   }
 }
@@ -167,16 +175,16 @@ const useGoods = ()=>{
   margin-top: 20px;
   //border: 1px solid #8D8D8D;
   .goods-article {
-    width: 940px;
+    //width: 940px;
     //width: 70%;
-    margin-right: 20px;
+    //margin-right: 20px;
     border: 1px solid #8D8D8D;
   }
-  .goods-aside {
-    width: 280px;
-    //width: 29%;
-    min-height: 1000px;
-  }
+  //.goods-aside {
+  //  //width: 280px;
+  //  //width: 29%;
+  //  min-height: 1000px;
+  //}
 }
 
 

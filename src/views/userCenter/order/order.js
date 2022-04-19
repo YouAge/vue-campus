@@ -1,5 +1,6 @@
 import {ref} from 'vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage  } from 'element-plus'
+import { updateOrderPut } from '@/api/shop'
 // 取消订单逻辑
 export const useCancel = () => {
   // 组件实例
@@ -13,15 +14,21 @@ export const useCancel = () => {
 // 确认收货逻辑
 export const useConfirm = () => {
   const handlerConfirm = (order) => {
-    ElMessageBox.confirm(
-      '亲，您确认收货吗？确认后货款将打给卖家？','Warning',{
-        confirmButtonText:'确定',
-        cancelButtonText:'取消',
-        type:'warning'
-      }
-    ).then(()=>{
-      console.log('确认收货')
-    }).catch(()=>{})
+    return  new Promise((resolve, reject) => {
+      ElMessageBox.confirm(
+        '亲，您确认收货吗？确认后货款将打给卖家？','Warning',{
+          confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type:'warning'
+        }
+      ).then(()=>{
+        updateOrderPut({orderId:order.orderId,orderState:4}).then(()=>{
+          ElMessage.success('收货成功')
+          resolve()
+        })
+      }).catch((e)=>{reject(e)})
+    })
+
   }
   return { handlerConfirm }
 }

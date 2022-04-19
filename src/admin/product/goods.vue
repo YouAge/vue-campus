@@ -1,11 +1,9 @@
 <template>
-  <div style="display: flex;align-items: center">
+  <div style="display: flex;align-items: center;">
     <div style="font-size: 14px;"> 商品名称：</div>
-    <h-input v-model:value="searchUser" placeholder="请输入用户名" width="300px" style="margin-right: 15px;"/>
+    <h-input v-model:value="searchUser" placeholder="搜索商品名称" width="300px" style="margin-right: 15px;"/>
     <a-button type="primary" @click="searchAdmin" style="margin-right: 15px;">
       <template #icon><SearchOutlined /></template>搜索</a-button>
-    <a-button  @click="delSearch" style="margin-right: 15px;">
-      <template #icon><SearchOutlined /></template>删除</a-button>
   </div>
   <div class="table-operations">
     <a-button @click="$router.push('/admin/product/add-prod-info')" type="primary">
@@ -17,39 +15,55 @@
   <div class="admin-table-select">
     当前表格已选择 <b>{{0}}</b> 项 <span class="admin-table-clear">清空</span>
   </div>
-  <a-table :columns="columnsTable"
-           :pagination="{current:page.pageIndex,pageSize:page.pageSize,total:page.total,onChange:currentPage}"
-           bordered :data-source="dataTable"  :row-selection="{  onChange: checkAll }">
-    <template #status="{record}">
-      <el-switch @change="updateGoodsStatus(record)"
-        v-model="record.status"
-        class="ml-2"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-      />
-    </template>
-    <template #picture="{record}">
+
+<!--  // 商品信息表-->
+  <vxe-grid :data="dataTable" :columns="columnsTable"
+            showHeaderOverflow sync-resize resizable
+            border :max-height="650">
+        <template #status="{row}">
+          <el-switch @change="updateGoodsStatus(row)"
+            v-model="row.status"
+            class="ml-2"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          />
+        </template>
+
+    <template #picture="{row}">
       <div>
-        <a-image  :width="200" :src="record.image" v-if="record.image"/>
+        <a-image  :width="150" :src="row.image" v-if="row.image"/>
       </div>
 
     </template>
-    <template #skus="{record}">
-        <a-button @click="showSkuFun(record.skus,record.sku)">查看</a-button>
+    <template #skus="{row}">
+      <a-button @click="showSkuFun(row.skus,row.sku)">查看</a-button>
     </template>
-    <template #config="{record}">
-      <a-button type="primary" style="margin-right: 10px" @click="showEdit(record)">编辑</a-button>
-      <a-button type="primary" danger @click="delGoods(record)">删除</a-button>
+    <template #config="{row}">
+      <div style="display: flex;">
+        <vxe-button type="primary" size="mini" status="primary"  @click="showEdit(row)">编辑</vxe-button>
+        <vxe-button type="primary" size="mini" status="danger" danger @click="delGoods(row)">删除</vxe-button>
+      </div>
+
     </template>
-  </a-table>
+
+    <template #pager>
+      <vxe-pager
+        :layouts="['Sizes', 'PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'FullJump', 'Total']"
+        :current-page.sync="page.pageIndex"
+        :page-size.sync="page.pageSize"
+        :total="page.total"
+        @page-change="currentPage">
+      </vxe-pager>
+    </template>
+  </vxe-grid>
 
 
   <a-modal v-model:visible="showSku.visible" title="查看sku" keyboard :footer="null" :bodyStyle="{minHeight: '400px'}">
     <goods-sku :shop-data-sku="showSku.shopDataSku"/>
   </a-modal>
 
-
-  <a-modal v-model:visible="editGoodstatus" title="修改商品基础信息" width="40%"  @ok="editFun" @cancel="cancelFun" >
+  <a-modal v-model:visible="editGoodstatus" title="修改商品信息" width="40%" okText="确定"
+           @ok="editFun" @cancel="cancelFun" cancelText="取消">
     <el-form :model="goodsForm" ref="goodsFormRef">
       <el-form-item label="商品名称">
         <el-input v-model="goodsForm.name"></el-input>
@@ -94,14 +108,15 @@ import GoodsSku from './components/goodsSku.vue'
 import { cateGet, tagGet } from '@/api/admin/specs.js'
 
 const columnsTable =[
-  {title:'商品名字',dataIndex:'name'},
-  {title:'商品原价',dataIndex:'price'},
-  {title:'商品折扣',dataIndex:'discount'},
-  {title:'商品库存',dataIndex:'inventory'},
-  {title:'商品SKU',dataIndex:'skus',slots:{ customRender: 'skus'}},
-  {title:'商品状态',dataIndex:'status',slots:{ customRender: 'status'}},
-  {title:'商品图片',dataIndex:'picture',slots:{ customRender: 'picture'}},
-  {title:'操作',slots:{ customRender: 'config'}},
+  {type:'checkbox'},
+  {title:'商品名称',field:'name',},
+  {title:'商品原价',field:'price'},
+  {title:'商品折扣',field:'discount'},
+  {title:'商品库存',field:'inventory'},
+  {title:'商品SKU',field:'skus',slots:{ default: 'skus'}},
+  {title:'商品状态',field:'status',slots:{ default: 'status'}},
+  {title:'商品图片',field:'picture',slots:{ default: 'picture'}},
+  {title:'操作',slots:{ default: 'config'}},
 
 ]
 
@@ -145,8 +160,10 @@ export default {
       pageIndex:1,
       total:0
     })
-    function currentPage(pageIndex,pageSize){
-      getShopAllHttp({},pageIndex,pageSize)
+    function currentPage({currentPage,pageSize}){
+      page.value.pageSize = pageSize
+      page.value.pageIndex = currentPage
+      getShopAllHttp({},currentPage,pageSize)
     }
 
     function searchAdmin(){
@@ -163,8 +180,9 @@ export default {
     getCateDateAll()
     function getShopAllHttp(item={},pageIndex=page.value.pageIndex,pageSize=page.value.pageSize){
        productGet({pageIndex,pageSize,...item}).then(data=>{
+         console.log('-----',data)
          dataTable.value = data.rows
-         page.value.total = data.total
+         page.value.total = data.count
        })
     }
     getShopAllHttp()
@@ -178,7 +196,7 @@ export default {
       showSku.value.shopDataSku = skus
     }
     function updateGoodsStatus(row){
-      app.$confirm('您确定要下架该商品吗','下架提醒',{
+      app.$confirm(`您确定要${row.status?'上架':"下架"}该商品吗`,`${row.status?'上架':"下架"}提醒`,{
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: 'warning',
@@ -195,17 +213,18 @@ export default {
     }
 
     async function delGoods(row){
-      app.$confirm('您确定要下架该商品吗','下架提醒',{
+      app.$confirm('您确定要删除该商品吗','删除提醒',{
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: 'warning',
       }).then(()=>{
-        delProduct({id:row.id}).then(()=>{
+        delProduct({goodsIds:[row.id]}).then(()=>{
           app.$message.success(
             '删除成功'
           )
+          getShopAllHttp()
         })
-        getShopAllHttp()
+
       })
     }
     function setGoodsImages(value){

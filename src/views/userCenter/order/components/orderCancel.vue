@@ -47,7 +47,7 @@ export default {
         orderState: 6,
         cancelReason: curText.value
       }).then(() => {
-        message.warn( '取消订单成功' )
+        ElMessage.warning( '取消订单成功' )
         currOrder.value.orderState = 6
         visibleDialog.value = false
       })

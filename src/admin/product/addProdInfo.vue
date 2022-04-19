@@ -1,6 +1,7 @@
 <template>
-<Form :model="shopData"  ref="goodFormRef" :rules="rulesForm" :label-col="{span:2}" :wrapper-col="{span:18}">
-  <form-item label="商品名称"  name="name">
+<Form :model="shopData"  ref="goodFormRef" :rules="rulesForm"
+      :label-col="{span:2}" :wrapper-col="{span:13}">
+  <form-item label="商品名称"  name="name" placeholder="输入商品名称" >
     <Input v-model:value="shopData.name"/>
   </form-item>
   <form-item label="商品种类" name="crateId">
@@ -40,7 +41,7 @@
 <!--    <a-button @click="setImagArr" style="margin-right: 15px;">选择图片</a-button>-->
 <!--    <a-button @click="shopData.picture=[]">重置图片</a-button>-->
 
-    <el-input v-model="pictureModel" clearable placeholder="Please input password"/>
+    <el-input v-model="pictureModel" clearable placeholder="输入商品图片"/>
   </form-item>
 
   <form-item label="商品介绍类型" >
@@ -62,7 +63,7 @@
       <a-button type="primary" style="margin: 10px" @click="addSpecsFun">添加属性</a-button>
 <!--      <a-button type="primary" danger>删除</a-button>-->
     </div>
-    <a-table :columns="specsTable" :data-source="specsDateTable">
+    <a-table :columns="specsTable" :data-source="specsDateTable" v-if="specsDateTable.length>0">
       <template #value="{record}">
         <div>
           <a-tag color="#108ee9" v-for="item in record.value" :key="item">{{item}}</a-tag>
@@ -311,6 +312,9 @@ export default {
 
     function submitProduct(){
       goodFormRef.value.validate().then(async ()=>{
+        if(shopData.skus.length ===0){
+          return app.$message.success('商品sku 不能为空')
+        }
        const item = await productPost(shopData)
         console.log(item)
         //天机成功后提示，
@@ -344,5 +348,11 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+::v-deep(.ant-form-item-label ){
+  > label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #000000;
+  }
+}
 </style>

@@ -13,7 +13,7 @@ export async function productGet(data){
   return await  Api.get('/admin/product',{params:data})
 }
 export async function delProduct(data){
-  return await Api.delete('/admin/product',{params:data})
+  return await Api.patch('/admin/product',data)
 }
 export async function productPut(data){
   return await Api.put('/admin/product',data)
@@ -36,4 +36,7 @@ export async function imagsListGet(paths){
 
 export async function showAllOrder(data){
   return await Api.get('/admin/order',{params:data})
+}
+export async function updateAllOrder(data){
+  return await Api.put('/admin/order',data)
 }

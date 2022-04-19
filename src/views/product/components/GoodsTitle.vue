@@ -2,8 +2,8 @@
   <p class="g-name">{{goods.name}}</p>
   <p class="g-desc">{{goods.desc}}</p>
   <p class="g-price">
-    <span>{{goods.discount}}</span>
-    <span>{{goods.price}}</span>
+    <span>{{price?price:goods.discount}}</span>
+    <span>{{oldPrice?oldPrice:goods.price}}</span>
   </p>
   <div class="g-service">
     <dl>
@@ -36,6 +36,14 @@ export default {
     goods: {
       type: Object,
       default: () => ({})
+    },
+    price:{
+      type:Number,
+      default: 0
+    },
+    oldPrice:{
+      type:Number,
+      default: 0
     }
   },
   setup (props) {

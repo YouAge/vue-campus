@@ -41,7 +41,7 @@ import HTabsPanel from '@/components/order/HTabsPanel.vue'
 import HTabs from '@/components/order/HTabs.vue'
 import { orderList as opt } from '../../../../mock/goodsMock.js'
 import OrderItem from '@/views/userCenter/order/components/OrderItem.vue'
-import { showOrderGet } from '@/api/shop'
+import { delOrderPatch, showOrderGet } from '@/api/shop'
 import HPagination from '@/components/order/HPagination.vue'
 import OrderCancel from '@/views/userCenter/order/components/orderCancel.vue'
 import { ElMessageBox } from 'element-plus'
@@ -79,7 +79,8 @@ export default {
         this.getOrderHttp()
       },
       // 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   methods:{
@@ -103,13 +104,18 @@ export default {
           type:'warning'
         }
       ).then(()=>{
-        console.log('删除成功')
+        delOrderPatch({orderId:order.orderId}).then(()=>{
+          this.$message.success('删除成功')
+          this.getOrderHttp()
+        })
       }).catch(()=>{})
 
     },
     handlerConfirm(order){
       const {handlerConfirm} = useConfirm()
-      handlerConfirm(order)
+      handlerConfirm(order).then(()=>{
+        this.getOrderHttp()
+      })
     },
     handlerLogistics(){
 
